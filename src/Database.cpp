@@ -15,13 +15,73 @@
  * This function serves as the default constructor of the Database class.
 */
 Database::Database() {
-    
+    (*this).createTimestamp = 0;
+    (*this).lastAccessedTimestamp = 0;
+    (*this).lastModifiedTimestamp = 0;
+    (*this).numReaders = 0;
+    (*this).numWriters = 0;
+    (*this).fileLocation = "";
+    (*this).masterPWHash = "";
+}
+
+Database::Database(long createTimestamp, long lastAccessedTimestamp, long lastModifiedTimestamp, std::string fileLocation, std::string masterPWHash) {
+    (*this).createTimestamp = createTimestamp;
+    (*this).lastAccessedTimestamp = lastAccessedTimestamp;
+    (*this).lastModifiedTimestamp = lastModifiedTimestamp;
+    (*this).numReaders = 0;
+    (*this).numWriters = 0;
+    (*this).fileLocation = fileLocation;
+    (*this).masterPWHash = masterPWHash;
 }
 
 /* MEMBER FUNCTIONS */
+bool updateMasterPW(std::string) {
+    
+    return true;
+}
+
+bool deleteDB(std::string plaintextMasterPW) {
+
+    return true;
+}
 
 /* GETTERS */
+int Database::getNumReaders() { 
+    int retVal = (*this).numReaders;
+    return retVal;
+}
+int Database::getNumWriters() {
+    int retVal = (*this).numWriters;
+    return retVal;
+}
+long Database::getCreateTimestamp() {
+    long retVal = (*this).createTimestamp;
+    return retVal;
+}
+long Database::getLastAccessedTimestamp() {
+    long retVal = (*this).lastAccessedTimestamp;
+    return retVal;
+}
+long Database::getLastModifiedTimestamp() {
+    long retVal = (*this).lastModifiedTimestamp;
+    return retVal;
+}
+std::string Database::getFileLocation() {
+    std::string retVal = (*this).fileLocation;
+    return retVal;
+}
+std::string Database::getMasterPWHash() {
+    std::string retVal = (*this).masterPWHash;
+    return retVal;
+}
 
 /* SETTERS */
+void Database::setCreateTimestamp(long createTimestamp) { (*this).createTimestamp = createTimestamp; }
+void Database::setFileLocation(std::string fileLocation) { (*this).fileLocation = fileLocation; }
+void Database::setLastAccessedTimestamp(long lastAccessedTimestamp) { (*this).lastAccessedTimestamp = lastAccessedTimestamp; }
+void Database::setLastModifiedTimestamp(long lastModifiedTimestamp) { (*this).lastModifiedTimestamp = lastModifiedTimestamp; }
+void Database::setMasterPWHash(std::string masterPWHash) { (*this).masterPWHash = masterPWHash; }
+void Database::setNumReaders(int numReaders) { (*this).numReaders = numReaders; }
+void Database::setNumWriters(int numWriters) { (*this).numWriters = numWriters; }
 
 /* END OF DATABASE CLASS IMPLEMENTATION */
