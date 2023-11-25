@@ -15,15 +15,15 @@ DEBUG_TARGET = debug
 # MAKE FUNCTIONS
 ## entry point for the make commmand
 all: clean bin ${MAIN_TARGET}
-	./csafe
+	bin/csafe
 
 ## build the debug executable
 debug: clean bin $(OBJS) 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) debug.cpp -o $@ $(LDLIBS)
-	./debug
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) debug.cpp -o bin/$@ $(LDLIBS)
+	bin/debug
 
 $(MAIN_TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $(MAIN_TARGET) $(OBJS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o bin/$@ $(OBJS) $(LDLIBS)
 
 ## remove .o files and the executable
 ## -rf to recursively remove files from directory

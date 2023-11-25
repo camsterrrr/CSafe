@@ -24,7 +24,8 @@ Database::Database() {
     (*this).masterPWHash = "";
 }
 
-Database::Database(long createTimestamp, long lastAccessedTimestamp, long lastModifiedTimestamp, std::string fileLocation, std::string masterPWHash) {
+Database::Database(long createTimestamp, long lastAccessedTimestamp, long lastModifiedTimestamp,
+        std::string fileLocation, std::string masterPWHash) {
     (*this).createTimestamp = createTimestamp;
     (*this).lastAccessedTimestamp = lastAccessedTimestamp;
     (*this).lastModifiedTimestamp = lastModifiedTimestamp;
