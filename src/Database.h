@@ -18,7 +18,7 @@ class Database {
         /* MEMBER FUNCTIONS */
     
         bool deleteDB(std::string);
-        bool updateMasterPW(std::string);
+        bool updateMasterPW(std::string, std::string);
         bool verifyMasterPW(std::string);
         int writeDataToFile(std::string);
         /* LOCKS */

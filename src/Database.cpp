@@ -38,7 +38,7 @@ Database::Database(long createTimestamp, long lastAccessedTimestamp, long lastMo
 /* MEMBER FUNCTIONS */
 bool Database::deleteDB(std::string plaintextMasterPW) {
     bool retVal = false;
-    
+
     if (verifyMasterPW(plaintextMasterPW)) {
 
         /* delete operation*/
@@ -49,9 +49,15 @@ bool Database::deleteDB(std::string plaintextMasterPW) {
     return retVal;
 }
 
-bool Database::updateMasterPW(std::string currentMasterPW) {
+bool Database::updateMasterPW(std::string plaintextMasterPW, std::string newMasterPW) {
+    bool retVal = false;
     
-    return true;
+    if (verifyMasterPW(plaintextMasterPW)) {
+        setMasterPWHash(newMasterPW);
+        retVal = true;
+    }
+
+    return retVal;
 }
 
 bool Database::verifyMasterPW(std::string plaintextMasterPW) {
