@@ -21,12 +21,12 @@
 #define WARN(...) fprintf(stderr, "WARN:\t"); fprintf(stderr, __VA_ARGS__);
 
 /* FUNCTION DECLARATIONS */
+void menu();
 void testLogging();
 
 /* START OF MAIN */
 int main(void) {
-    printf("CSafe!\n");
-    testLogging();
+    menu();
 }
 /* END OF MAIN */
 
@@ -35,7 +35,12 @@ int main(void) {
  * 
 */
 void menu() {
-
+    printf("============ WELCOME TO CSafe ============\n");
+    printf("\t1. Create new password database.\n");
+    printf("\t2. Open an existing password database.\n");
+    printf("\t3. \n");
+    printf("\t4. \n");
+    printf("==========================================\n");
 }
 
 /**
@@ -46,6 +51,7 @@ int readFileLocation(std::string fileLocation) {
     return 0;
 }
 
+/* UNIT TESTS */
 void testLogging() {
     DEBUG("DEBUG test\n");
     ERROR("ERROR test\n");

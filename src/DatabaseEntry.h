@@ -2,7 +2,7 @@
  * 
 */
 
-/* PREPROCESSING STATEMENTS */
+/* LIBRARIES */
 #include <string>
 
 /* START OF DATABASEENTRY CLASS */
@@ -14,6 +14,7 @@ class DatabaseEntry {
         /* CONSTRUCTORS*/
         DatabaseEntry();
         /* MEMBER FUNCTIONS */
+        std::string toString();
         /* GETTERS */
         /* SETTERS */
 

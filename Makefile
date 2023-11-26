@@ -2,7 +2,7 @@
 CXX = g++
 CXXFLAGS = -std=c++11 	##
 CPPFLAGS = -I./src/objs ## -I represents an include statement
-LDLIBS = -lcrypto 		## -l represents a binary in ...
+LDLIBS = -lcrypto 		## -l represents a binary in ...(some folder in the FS) ...
 HEADERS = $(wildcard src/*.h)
 SRCS = $(wildcard src/*.cpp)
 OBJS = $(SRCS:src/%.c=bin/%.o)

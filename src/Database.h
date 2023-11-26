@@ -2,7 +2,7 @@
  * 
 */
 
-/* PREPROCESSING STATEMENTS */
+/* LIBRARIES */
 #include <string>
 #include <pthread.h>
 
@@ -16,8 +16,11 @@ class Database {
         Database();
         Database(long, long, long, std::string, std::string);
         /* MEMBER FUNCTIONS */
-        bool updateMasterPW(std::string);
+    
         bool deleteDB(std::string);
+        bool updateMasterPW(std::string);
+        bool verifyMasterPW(std::string);
+        int writeDataToFile(std::string);
         /* LOCKS */
         /* GETTERS */
         int getNumReaders();

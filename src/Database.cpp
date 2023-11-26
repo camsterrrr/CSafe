@@ -36,14 +36,35 @@ Database::Database(long createTimestamp, long lastAccessedTimestamp, long lastMo
 }
 
 /* MEMBER FUNCTIONS */
-bool updateMasterPW(std::string) {
+bool Database::deleteDB(std::string plaintextMasterPW) {
+    bool retVal = false;
+    
+    if (verifyMasterPW(plaintextMasterPW)) {
+
+        /* delete operation*/
+
+        retVal = true;
+    }
+
+    return retVal;
+}
+
+bool Database::updateMasterPW(std::string currentMasterPW) {
     
     return true;
 }
 
-bool deleteDB(std::string plaintextMasterPW) {
+bool Database::verifyMasterPW(std::string plaintextMasterPW) {
+    std::string hashedPlaintextMasterPW = ""; 
+    
+    /* hashing operation */
 
-    return true;
+    return hashedPlaintextMasterPW == (*this).masterPWHash;
+}
+
+int Database::writeDataToFile(std::string writeLocation) {
+
+    return 0;
 }
 
 /* GETTERS */
