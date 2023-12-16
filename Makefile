@@ -28,12 +28,15 @@ $(MAIN_TARGET): $(OBJS)
 ## remove .o files and the executable
 ## -rf to recursively remove files from directory
 clean:
-	rm -rf bin 
+	rm -rf bin output/*
 
 ## make binary directory
 ## -p for removing chance of errors
 bin:
 	mkdir -p bin
+
+find:
+	find ./output -type f -name "_*"
 
 .PHONY: all clean
 

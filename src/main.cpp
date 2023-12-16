@@ -5,6 +5,8 @@
 /* LIBRARIES */
 #include <fcntl.h>
 #include <iostream>
+#include <stdio.h>
+#include <unistd.h>
 
 /* PREPROCESSING STATEMENTS */
 
@@ -20,13 +22,16 @@
 #define FATAL(...) fprintf(stderr, "FATAL:\t"); fprintf(stderr, __VA_ARGS__);
 #define INFO(...) fprintf(stderr, "INFO:\t"); fprintf(stderr, __VA_ARGS__);
 #define WARN(...) fprintf(stderr, "WARN:\t"); fprintf(stderr, __VA_ARGS__);
+#define PRINTSTR(...) fprintf(stderr, "%s\n", __VA_ARGS__);
 
 /* FUNCTION DECLARATIONS */
 void menu(unsigned int*);
+void menuSwitchBlock(unsigned int*);
 void testLogging();
-char* stringToCString(std::string);
 int creatFileAtLocation(std::string);
+int closeFileDescriptor (int);
 int openFileAtLocation(std::string);
+void readFromFileDescriptor(int);
 
 /* START OF MAIN */
 int main(void) {
@@ -36,7 +41,7 @@ int main(void) {
         unsigned int userInput = 0;
         menu(&userInput);
         if(userInput) {
-            // switchBlock(&userInput);
+            menuSwitchBlock(&userInput);
         } else {
             break;
         }
@@ -55,45 +60,104 @@ void menu(unsigned int *userInput) {
     printf("\t0. End program.\n");
     printf("\t1. Create new password database.\n");
     printf("\t2. Open an existing password database.\n");
-    printf("\t3. \n");
-    printf("\t4. \n");
+    // printf("\t3. \n");
+    // printf("\t4. \n");
     printf("==========================================\n");
     printf("\t$ ");
 
+    /* USER INPUT */
     scanf("%u", userInput);
+    // PRINTSTR(inputBuf);
 }
 
-int checkValidFileDescriptor(int fileDescriptor) {
-    return (fileDescriptor > 0) ? 0 : 1;
+void menuSwitchBlock(unsigned int *userInput) {
+    char inputBuf[256];
+    if (*userInput == 1) {
+        printf("\tEnter file location:\n");
+        printf("\t$ ");
+
+        /* USER INPUT */
+        scanf("%s", inputBuf);
+        // PRINTSTR(inputBuf);
+
+        std::string fileLocation(inputBuf);
+        int fd = creatFileAtLocation(fileLocation);
+
+        if (fd <= 0) {
+            ERROR("Database creation failed!\n");
+            return;
+        }
+
+        readFromFileDescriptor(fd);
+
+        closeFileDescriptor(fd);
+    } else if (*userInput == 2) {
+        printf("\tEnter file location:\n");
+        printf("\t$ ");
+
+        /* USER INPUT */
+        scanf("%s", inputBuf);
+        // PRINTSTR(inputBuf);
+
+        std::string fileLocation(inputBuf);
+        int fd = openFileAtLocation(fileLocation);
+
+        if (fd <= 0) {
+            ERROR("Unable to read database!\n");
+            return;
+        }
+
+        // READ DATA
+
+        closeFileDescriptor(fd);
+    } else if (*userInput == 3) {
+        
+    } else if (*userInput == 4) {
+        
+    }  else {
+
+    }
 }
 
-/**
- * 
-*/
+void readFromFileDescriptor(int fd) {
+    FILE *fileObj = fdopen(fd, "r");
+
+    if (fileObj == NULL) {
+        ERROR("Unable to open file descriptor!\n");
+        return; 
+    }
+
+    char buffer[256];
+    std::string fileContents = "";
+    while (fgets(buffer, 1024, fileObj) != NULL) {
+        fileContents.append(buffer);
+        PRINTSTR(buffer);
+    }
+
+    fclose(fileObj);
+}
+
+int checkValidFileDescriptor(int fd) { return (fd > 0) ? 0 : 1; }
+
+int closeFileDescriptor (int fd) { return close(fd); }
+
 int creatFileAtLocation(std::string fileLocation) {
+    const char *cStrFileLocation = fileLocation.c_str();
+    int fd = creat(cStrFileLocation, O_RDWR);
 
-    // int fd = creat();
+    if (checkValidFileDescriptor(fd) == 1) { return -1; }
 
-    return 0;
+    return fd;
 }
 
-/**
- * 
-*/
 int openFileAtLocation(std::string fileLocation) {
     const char *cStrFileLocation = fileLocation.c_str();
     int fd = open(cStrFileLocation, O_RDONLY);
 
-    if (checkValidFileDescriptor(fd) == 1) { return 1; }
+    if (checkValidFileDescriptor(fd) == 1) { return -1; }
 
-    return 0;
+    return fd;
 }
-
-
-
-// char* stringToCString(std::string stringToConvert) {
-
-// }
 
 /* UNIT TESTS */
 void testLogging() {
