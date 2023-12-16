@@ -22,7 +22,7 @@
 #define WARN(...) fprintf(stderr, "WARN:\t"); fprintf(stderr, __VA_ARGS__);
 
 /* FUNCTION DECLARATIONS */
-void menu();
+void menu(unsigned int*);
 void testLogging();
 char* stringToCString(std::string);
 int creatFileAtLocation(std::string);
@@ -30,7 +30,19 @@ int openFileAtLocation(std::string);
 
 /* START OF MAIN */
 int main(void) {
-    menu();
+    INFO("Starting CSafe...\n"); 
+    
+    while (1) {   
+        unsigned int userInput = 0;
+        menu(&userInput);
+        if(userInput) {
+            // switchBlock(&userInput);
+        } else {
+            break;
+        }
+    }
+
+    INFO("Ending CSafe...\n");
 }
 /* END OF MAIN */
 
@@ -38,14 +50,17 @@ int main(void) {
 /**
  * 
 */
-void menu() {
+void menu(unsigned int *userInput) {
     printf("============ WELCOME TO CSafe ============\n");
+    printf("\t0. End program.\n");
     printf("\t1. Create new password database.\n");
     printf("\t2. Open an existing password database.\n");
     printf("\t3. \n");
     printf("\t4. \n");
     printf("==========================================\n");
-    printf("\n\t$");
+    printf("\t$ ");
+
+    scanf("%u", userInput);
 }
 
 int checkValidFileDescriptor(int fileDescriptor) {
@@ -69,7 +84,7 @@ int openFileAtLocation(std::string fileLocation) {
     const char *cStrFileLocation = fileLocation.c_str();
     int fd = open(cStrFileLocation, O_RDONLY);
 
-    if (checkValidFileDescriptor(fileLocation) == 1) { return 1; }
+    if (checkValidFileDescriptor(fd) == 1) { return 1; }
 
     return 0;
 }
