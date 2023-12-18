@@ -24,7 +24,7 @@ Database::Database() {
     (*this).masterPWHash = "";
 }
 
-Database::Database(long createTimestamp, long lastAccessedTimestamp, long lastModifiedTimestamp,
+Database::Database(time_t createTimestamp, time_t lastAccessedTimestamp, time_t lastModifiedTimestamp,
         std::string fileLocation, std::string masterPWHash) {
     (*this).createTimestamp = createTimestamp;
     (*this).lastAccessedTimestamp = lastAccessedTimestamp;
@@ -82,16 +82,16 @@ int Database::getNumWriters() {
     int retVal = (*this).numWriters;
     return retVal;
 }
-long Database::getCreateTimestamp() {
-    long retVal = (*this).createTimestamp;
+time_t Database::getCreateTimestamp() {
+    time_t retVal = (*this).createTimestamp;
     return retVal;
 }
-long Database::getLastAccessedTimestamp() {
-    long retVal = (*this).lastAccessedTimestamp;
+time_t Database::getLastAccessedTimestamp() {
+    time_t retVal = (*this).lastAccessedTimestamp;
     return retVal;
 }
-long Database::getLastModifiedTimestamp() {
-    long retVal = (*this).lastModifiedTimestamp;
+time_t Database::getLastModifiedTimestamp() {
+    time_t retVal = (*this).lastModifiedTimestamp;
     return retVal;
 }
 std::string Database::getFileLocation() {
@@ -104,10 +104,10 @@ std::string Database::getMasterPWHash() {
 }
 
 /* SETTERS */
-void Database::setCreateTimestamp(long createTimestamp) { (*this).createTimestamp = createTimestamp; }
+void Database::setCreateTimestamp(time_t createTimestamp) { (*this).createTimestamp = createTimestamp; }
 void Database::setFileLocation(std::string fileLocation) { (*this).fileLocation = fileLocation; }
-void Database::setLastAccessedTimestamp(long lastAccessedTimestamp) { (*this).lastAccessedTimestamp = lastAccessedTimestamp; }
-void Database::setLastModifiedTimestamp(long lastModifiedTimestamp) { (*this).lastModifiedTimestamp = lastModifiedTimestamp; }
+void Database::setLastAccessedTimestamp(time_t lastAccessedTimestamp) { (*this).lastAccessedTimestamp = lastAccessedTimestamp; }
+void Database::setLastModifiedTimestamp(time_t lastModifiedTimestamp) { (*this).lastModifiedTimestamp = lastModifiedTimestamp; }
 void Database::setMasterPWHash(std::string masterPWHash) { (*this).masterPWHash = masterPWHash; }
 void Database::setNumReaders(int numReaders) { (*this).numReaders = numReaders; }
 void Database::setNumWriters(int numWriters) { (*this).numWriters = numWriters; }

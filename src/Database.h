@@ -14,7 +14,7 @@ class Database {
     public:
         /* CONSTRUCTORS*/
         Database();
-        Database(long, long, long, std::string, std::string);
+        Database(time_t, time_t, time_t, std::string, std::string);
         /* MEMBER FUNCTIONS */
     
         bool deleteDB(std::string);
@@ -25,23 +25,23 @@ class Database {
         /* GETTERS */
         int getNumReaders();
         int getNumWriters();
-        long getCreateTimestamp();
-        long getLastAccessedTimestamp();
-        long getLastModifiedTimestamp();
+        time_t getCreateTimestamp();
+        time_t getLastAccessedTimestamp();
+        time_t getLastModifiedTimestamp();
         std::string getFileLocation();
         std::string getMasterPWHash();
         /* SETTERS */
-        void setCreateTimestamp(long);
+        void setCreateTimestamp(time_t);
         void setFileLocation(std::string);
-        void setLastAccessedTimestamp(long);
-        void setLastModifiedTimestamp(long);
+        void setLastAccessedTimestamp(time_t);
+        void setLastModifiedTimestamp(time_t);
         void setMasterPWHash(std::string);
         void setNumReaders(int);
         void setNumWriters(int);
 
     /* MEMBER VARIABLES */
     private:
-        long createTimestamp, lastAccessedTimestamp, lastModifiedTimestamp;
+        time_t createTimestamp, lastAccessedTimestamp, lastModifiedTimestamp;
         int numReaders, numWriters;
         pthread_mutex_t mutex;
         pthread_cond_t canRead, canWrite;

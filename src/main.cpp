@@ -8,30 +8,17 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "Database.h"
+#include "File.h"
+#include "Log.h"
+
 /* PREPROCESSING STATEMENTS */
 
-/** LOGGING FUNCTIONS
- * DEBUG: info that is useful to devs.
- * ERROR: errors that crash a function.
- * FATAL: errors that force app to shutdown or crash.
- * INFO: general info about how app is running.
- * WARN: something can cause oddities in application behavior.
-*/
-#define DEBUG(...) fprintf(stderr, "DEBUG:\t"); fprintf(stderr, __VA_ARGS__);
-#define ERROR(...) fprintf(stderr, "ERROR:\t"); fprintf(stderr, __VA_ARGS__);
-#define FATAL(...) fprintf(stderr, "FATAL:\t"); fprintf(stderr, __VA_ARGS__);
-#define INFO(...) fprintf(stderr, "INFO:\t"); fprintf(stderr, __VA_ARGS__);
-#define WARN(...) fprintf(stderr, "WARN:\t"); fprintf(stderr, __VA_ARGS__);
-#define PRINTSTR(...) fprintf(stderr, "%s\n", __VA_ARGS__);
 
 /* FUNCTION DECLARATIONS */
 void menu(unsigned int*);
 void menuSwitchBlock(unsigned int*);
-void testLogging();
-int creatFileAtLocation(std::string);
-int closeFileDescriptor (int);
-int openFileAtLocation(std::string);
-void readFromFileDescriptor(int);
+Database* newDatabase(char*);
 
 /* START OF MAIN */
 int main(void) {
@@ -71,7 +58,7 @@ void menu(unsigned int *userInput) {
 }
 
 void menuSwitchBlock(unsigned int *userInput) {
-    char inputBuf[256];
+    char *inputBuf = (char*)calloc(256, sizeof(char));
     if (*userInput == 1) {
         printf("\tEnter file location:\n");
         printf("\t$ ");
@@ -88,7 +75,7 @@ void menuSwitchBlock(unsigned int *userInput) {
             return;
         }
 
-        readFromFileDescriptor(fd);
+        // readFromFileDescriptor(fd);
 
         closeFileDescriptor(fd);
     } else if (*userInput == 2) {
@@ -119,53 +106,33 @@ void menuSwitchBlock(unsigned int *userInput) {
     }
 }
 
-void readFromFileDescriptor(int fd) {
-    FILE *fileObj = fdopen(fd, "r");
+Database* newDatabase(char *fileLocation) {
+    printf("Your master password is used to decrypt the database. 
+        There are two considerations user's should make:\n");
+    printf("1. Master passwords unlock access to ALL stored passwords,
+        please ensure that it is secure!\n");
+    printf("2. If you forget this password, you won't be able to
+        decrypt your password database!\n");
+    printf("Enter a master password: \n");
+    printf("\t$");
 
-    if (fileObj == NULL) {
-        ERROR("Unable to open file descriptor!\n");
-        return; 
-    }
+    /* USER INPUT */
+    char *plaintextMasterPWBuffer = (char*)calloc(256, sizeof(char));
+    scanf("%s", plaintextMasterPWBuffer);
 
-    char buffer[256];
-    std::string fileContents = "";
-    while (fgets(buffer, 1024, fileObj) != NULL) {
-        fileContents.append(buffer);
-        PRINTSTR(buffer);
-    }
+    time_t currTimestamp;
+    time(&currTimestamp);
+    
+    Database newDB = new Database(currTimestamp, currTimestamp, currTimestamp, 
+        fileLocation, plaintextMasterPWBuffer);
 
-    fclose(fileObj);
+    /* NULL BUFFER */
+    memset(plaintextMasterPWBuffer, 0b00000000, sizeof(char));
+    memset(fileLocation, 0b00000000, sizeof(char));
+
+    return newDB; 
 }
-
-int checkValidFileDescriptor(int fd) { return (fd > 0) ? 0 : 1; }
-
-int closeFileDescriptor (int fd) { return close(fd); }
-
-int creatFileAtLocation(std::string fileLocation) {
-    const char *cStrFileLocation = fileLocation.c_str();
-    int fd = creat(cStrFileLocation, O_RDWR);
-
-    if (checkValidFileDescriptor(fd) == 1) { return -1; }
-
-    return fd;
-}
-
-int openFileAtLocation(std::string fileLocation) {
-    const char *cStrFileLocation = fileLocation.c_str();
-    int fd = open(cStrFileLocation, O_RDONLY);
-
-    if (checkValidFileDescriptor(fd) == 1) { return -1; }
-
-    return fd;
-}
-
-/* UNIT TESTS */
-void testLogging() {
-    DEBUG("DEBUG test\n");
-    ERROR("ERROR test\n");
-    FATAL("FATAL test\n");
-    INFO("INFO test\n");
-    WARN("WARN test\n");
-}
+// * calloc: https://en.cppreference.com/w/c/memory/calloc 
+// * memset: https://en.cppreference.com/w/cpp/string/byte/memset
 
 /* END OF FILE */
