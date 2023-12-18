@@ -19,15 +19,16 @@ typedef struct File {
 
 /* CONSTRUCTORS */
 File newFileObj();
+File newFileObjParams(char*, char*, int);
 
 /* MEMBER FUNCTIONS */
-int checkFuncParams(void*, void*);
-int checkFuncParams(void*, int);
+int checkFuncParamsPtr(void*, void*);
+int checkFuncParamsInt(void*, int);
 int checkValidFileDescriptor(int);
 int creatFileAtLocation(char*);
 int closeFileDescriptor (int);
 int openFileAtLocation(char*);
-void readFromFileDescriptor(File*, int);
+int readFromFileDescriptor(File*, int);
 
 /* GETTERS */
 char* getFileLocation(File*);

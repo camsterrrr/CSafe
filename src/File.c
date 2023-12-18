@@ -2,6 +2,7 @@
  * 
 */
 /* LIBRARIES */
+#include <fcntl.h>
 #include <string.h>
 
 #include "File.h"
@@ -23,26 +24,26 @@ File newFileObj() {
     return fileObj;
 }
 
-File newFileObj(char *fileLocation, char *hashedMasterPW, int fd) {
+File newFileObjParams(char *fileLocation, char *hashedMasterPW, int fd) {
     File fileObj = {
         .fileLocation = NULL, 
         .hashedMasterPW = NULL, 
         .fd = 0,
     };
 
-    setFileLocation(fileObj, fileLocation);
-    setHashedMasterPW(fileObj, hashedMasterPW);
-    setFD(fileObj, fd);
+    setFileLocation(&fileObj, fileLocation);
+    setHashedMasterPW(&fileObj, hashedMasterPW);
+    setFD(&fileObj, fd);
 
     return fileObj;
 }
 
 /* MEMBER FUNCTIONS */
-int checkFuncParams(void *arbitraryPtr0, void *arbitraryPtr1) { 
+int checkFuncParamsPtr(void *arbitraryPtr0, void *arbitraryPtr1) { 
     return ((arbitraryPtr0 == NULL) || (arbitraryPtr1 == NULL)) ? 1 : 0; 
 }
 
-int checkFuncParams(void *arbitraryPtr0, int arbitraryInt) { 
+int checkFuncParamsInt(void *arbitraryPtr0, int arbitraryInt) { 
     return ((arbitraryPtr0 == NULL) || (arbitraryInt == 0)) ? 1 : 0; 
 }
 
@@ -74,13 +75,13 @@ int openFileAtLocation(char *fileLocation) {
     return fd;
 }
 
-void readFromFileDescriptor(File *fileObj, int fd) {
+int readFromFileDescriptor(File *fileObj, int fd) {
     FILE *FILE = fdopen(fd, "r");
 
     //* NULL check
     if (FILE == NULL) {
         ERROR("Unable to open file descriptor!\n");
-        return NULL;
+        return -1;
     }
 
     /* This will be annoying to write */
@@ -98,7 +99,7 @@ void readFromFileDescriptor(File *fileObj, int fd) {
 /* GETTERS */
 char* getFileLocation(File *fileObj) {
     //* NULL check
-    if (checkFuncParams(fileObj, (*fileObj).fileLocation)) {
+    if (checkFuncParamsPtr(fileObj, (*fileObj).fileLocation)) {
         ERROR("NULL pointers! -- getFileLocation");
         return NULL;
     }
@@ -119,7 +120,7 @@ char* getFileLocation(File *fileObj) {
 
 char* getHashedMasterPW(File *fileObj) {
     //* NULL check
-    if (checkFuncParams(fileObj, (*fileObj).hashedMasterPW)) {
+    if (checkFuncParamsPtr(fileObj, (*fileObj).hashedMasterPW)) {
         ERROR("NULL pointers! -- getHashedMasterPW");
         return NULL;
     }
@@ -140,9 +141,9 @@ char* getHashedMasterPW(File *fileObj) {
 
 int getFD(File *fileObj) {
     //* NULL check
-    if (checkFuncParams(fileObj, (*fileObj).fd)) {
+    if (checkFuncParamsInt(fileObj, (*fileObj).fd)) {
         ERROR("NULL pointers! -- getFD");
-        return NULL;
+        return -1;
     }
 
     int retVal = (*fileObj).fd;
@@ -153,7 +154,7 @@ int getFD(File *fileObj) {
 /* SETTERS */
 int setFileLocation(File *fileObj, char *fileLocation) {
     //* NULL check
-    if (checkFuncParams(fileObj, fileLocation)) {
+    if (checkFuncParamsPtr(fileObj, fileLocation)) {
         ERROR("NULL pointers! -- setFileLocation");
         return 1;
     }
@@ -185,7 +186,7 @@ int setFileLocation(File *fileObj, char *fileLocation) {
 
 int setHashedMasterPW(File *fileObj, char *hashedMasterPW) {
     //* NULL check
-    if (checkFuncParams(fileObj, hashedMasterPW)) {
+    if (checkFuncParamsPtr(fileObj, hashedMasterPW)) {
         ERROR("NULL pointers! -- setHashedMasterPW");
         return 1;
     }
@@ -217,7 +218,7 @@ int setHashedMasterPW(File *fileObj, char *hashedMasterPW) {
 
 int setFD(File *fileObj, int fd) {
     //* NULL check
-    if (checkFuncParams(fileObj, fd)) {
+    if (checkFuncParamsInt(fileObj, fd)) {
         ERROR("NULL pointers! -- setFD");
         return 1; 
     }
