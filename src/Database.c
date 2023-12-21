@@ -4,6 +4,7 @@
 
 /* PREPROCESSING STATEMENTS */
 
+#include "Common.h"
 #include "Database.h"
 #include "Log.h"
 
@@ -12,7 +13,7 @@
 /* CONSTRUCTORS */
 /**
  * This function serves as the default constructor of the Database class.
-/* CONSTRUCTORS*/
+*/
 Database newDatabase() {
     Database dbObj = {
         .saltVal = NULL,
@@ -110,7 +111,7 @@ int setSaltVal(Database *dbObj, char *saltVal) {
 }
 
 int setFileObj(Database *dbObj, File *fileObj) {
-    if(checkFuncParamsPtr((*dbObj).fileObj, fileObj)) {
+    if(checkFuncParamsPtrs((*dbObj).fileObj, fileObj)) {
         ERROR("NULL pointers! -- setFileObj");
         return 1;
     }
@@ -145,7 +146,7 @@ int setNumWriters(Database *dbObj, int numWriters) {
 }
 
 int setPasswordObj(Database *dbObj, Password *passwordObj) {
-    if(checkFuncParamsPtr((*dbObj).passwordObj, passwordObj)) {
+    if(checkFuncParamsPtrs((*dbObj).passwordObj, passwordObj)) {
         ERROR("NULL pointers! -- setPasswordObj");
         return 1;
     }

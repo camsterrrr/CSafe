@@ -18,7 +18,6 @@
 /* FUNCTION DECLARATIONS */
 void menu(unsigned int*);
 void menuSwitchBlock(unsigned int*);
-// Database* newDatabase(char*);
 
 /* START OF MAIN */
 int main(void) {
@@ -47,14 +46,11 @@ void menu(unsigned int *userInput) {
     printf("\t0. End program.\n");
     printf("\t1. Create new password database.\n");
     printf("\t2. Open an existing password database.\n");
-    // printf("\t3. \n");
-    // printf("\t4. \n");
     printf("==========================================\n");
     printf("\t$ ");
 
     /* USER INPUT */
     scanf("%u", userInput);
-    // PRINTSTR(inputBuf);
 }
 
 void menuSwitchBlock(unsigned int *userInput) {
@@ -105,30 +101,5 @@ void menuSwitchBlock(unsigned int *userInput) {
 
     }
 }
-
-// Database* newDatabase(char *fileLocation) {
-//     printf("Your master password is used to decrypt the database. There are two considerations user\'s should make:\n");
-//     printf("1. Master passwords unlock access to ALL stored passwords, please ensure that it is secure!\n");
-//     printf("2. If you forget this password, you won\'t be able to decrypt your password database!\n");
-//     printf("Enter a master password: \n");
-//     printf("\t$");
-
-//     /* USER INPUT */
-//     char *plaintextMasterPWBuffer = (char*)calloc(256, sizeof(char));
-//     scanf("%s", plaintextMasterPWBuffer);
-
-//     time_t currTimestamp;
-//     time(&currTimestamp);
-    
-//    //  Database newDB = new Database(currTimestamp, currTimestamp, currTimestamp, fileLocation, plaintextMasterPWBuffer);
-
-//     /* NULL BUFFER */
-//     memset(plaintextMasterPWBuffer, 0b00000000, sizeof(char));
-//     memset(fileLocation, 0b00000000, sizeof(char));
-
-//     return NULL; // newDB; 
-// }
-// * calloc: https://en.cppreference.com/w/c/memory/calloc 
-// * memset: https://en.cppreference.com/w/cpp/string/byte/memset
 
 /* END OF FILE */

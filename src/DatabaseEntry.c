@@ -4,6 +4,7 @@
 
 /* PREPROCESSING STATEMENTS */
 
+#include "Common.h"
 #include "DatabaseEntry.h"
 #include "Log.h"
 
@@ -88,7 +89,7 @@ Password* getPasswordPtr(DatabaseEntry *dbeObj) {
 /* SETTERS */
 int setDatabasePtr(DatabaseEntry *dbeObj, Database *databasePtr) {
     //* NULL check
-    if (checkFuncParamsPtr(dbeObj, databasePtr)) {
+    if (checkFuncParamsPtrs(dbeObj, databasePtr)) {
         ERROR("NULL pointers! -- setDatabasePtr");
         return 1;
     }
@@ -100,7 +101,7 @@ int setDatabasePtr(DatabaseEntry *dbeObj, Database *databasePtr) {
 
 int setBackwardPtr(DatabaseEntry *dbeObj, DatabaseEntry *backwardPtr) {
     //* NULL check
-    if (checkFuncParamsPtr(dbeObj, backwardPtr)) {
+    if (checkFuncParamsPtrs(dbeObj, backwardPtr)) {
         ERROR("NULL pointers! -- setBackwardPtr");
         return 1;
     }
@@ -112,7 +113,7 @@ int setBackwardPtr(DatabaseEntry *dbeObj, DatabaseEntry *backwardPtr) {
 
 int setForwardPtr(DatabaseEntry *dbeObj, DatabaseEntry *forwardPtr) {
     //* NULL check
-    if (checkFuncParamsPtr(dbeObj, forwardPtr)) {
+    if (checkFuncParamsPtrs(dbeObj, forwardPtr)) {
         ERROR("NULL pointers! -- setForwardPtr");
         return 1;
     }
@@ -124,7 +125,7 @@ int setForwardPtr(DatabaseEntry *dbeObj, DatabaseEntry *forwardPtr) {
 
 int setPasswordPtr(DatabaseEntry *dbeObj, Password *passwordPtr) {
     //* NULL check
-    if (checkFuncParamsPtr(dbeObj, passwordPtr)) {
+    if (checkFuncParamsPtrs(dbeObj, passwordPtr)) {
         ERROR("NULL pointers! -- setPasswordPtr");
         return 1;
     }

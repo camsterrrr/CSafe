@@ -10,7 +10,8 @@
 #define COMMON_H
 
 /* MEMBER FUNCTIONS */
-int checkFuncParamsPtr(void*, void*);
+int checkFuncParamPtr(void*);
+int checkFuncParamsPtrs(void*, void*);
 int checkFuncParamsInt(void*, int);
 int copyBufContents(char*, char*);
 char* writeBufContents(char*);

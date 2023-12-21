@@ -21,7 +21,7 @@ typedef struct Database {
     time_t createTS, lastAccessedTS, lastModifiedTS;
 } Database;
 
-/* CONSTRUCTORS*/
+/* CONSTRUCTORS */
 Database newDatabase();
 Database newDatabaseParams(char*);
 

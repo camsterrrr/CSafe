@@ -12,7 +12,11 @@
 /* START OF PASSWORD CLASS IMPLEMENTATION */
 
 /* MEMBER FUNCTIONS */
-int checkFuncParamsPtr(void *arbitraryPtr0, void *arbitraryPtr1) { 
+int checkFuncParamPtr(void *arbitraryPtr) {
+    return arbitraryPtr == NULL ? 1 : 0;
+}
+
+int checkFuncParamsPtrs(void *arbitraryPtr0, void *arbitraryPtr1) { 
     return ((arbitraryPtr0 == NULL) || (arbitraryPtr1 == NULL)) ? 1 : 0; 
 }
 
@@ -22,7 +26,7 @@ int checkFuncParamsInt(void *arbitraryPtr0, int arbitraryInt) {
 
 int copyBufContents(char* dest, char* src) {
     //* NULL check
-    if (checkFuncParamsPtr(dest, src)) {
+    if (checkFuncParamsPtrs(dest, src)) {
         ERROR("NULL pointers! -- copyBufContents");
         return 1;
     }

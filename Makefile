@@ -1,12 +1,14 @@
 # VARIABLES
 CC = gcc
-CFLAGS = -Wall # I./src/objs ## -I represents an include statement
-LDLIBS = -lcrypto 		## -l represents a binary in ...(some folder in the FS) ...
+CFLAGS = -g -lcriterion -Wall
+LDLIBS = -lcrypto  		## -l represents a binary in ...(some folder in the FS) ...
+
 HEADERS = $(wildcard src/*.h)
 SRCS = $(wildcard src/*.c)
-TEST = $(wildcard tests/*.c)
 OBJS = $(SRCS:src/%.c=bin/%.o)
-### TESTS = $(wildcard test/*.c)
+
+UNITTESTS = $(wildcard tests/unit/*.c)
+TESTOBJS = $(filter-out bin/main.o, $(SRCS:src/%.c=bin/%.o))
 
 # TARGET EXECUTABLES
 MAIN_TARGET = csafe
@@ -15,32 +17,33 @@ TEST_TARGET = tests
 
 # MAKE FUNCTIONS
 ## entry point for the make commmand
-all: clean bin ${MAIN_TARGET}
+all: clean bin ${MAIN_TARGET} clear
 	bin/csafe
 
+Wall: clean bin ${MAIN_TARGET}
+
 ## build the debug executable
-debug: clean bin $(OBJS) 
-	$(CC) $(CFLAGS) debug.cpp -o bin/$@ $(LDLIBS)
-	bin/debug
+debug: clean bin $(OBJS) clear
+	$(CC) $(CFLAGS) $@.c -o bin/$@ $(LDLIBS)
+	bin/$@
 
-unittest: clean bin bin/File.o $(TEST)
-	$(CC) tests/unit/*.c -o bin/$@ -lcriterion bin/*.o
+unittest: clean bin $(TESTOBJS) $(UNITTESTS) clear
+	$(CC) $(CFLAGS) $(UNITTESTS) -o bin/$@ $(TESTOBJS)
 	bin/unittest
-
-bin/File.o: src/File.c
-	gcc -c $< -o $@
-
 
 $(MAIN_TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o bin/$@ $(OBJS) $(LDLIBS)
 
-bin/%.o: src/%.c
+bin/%.o: src/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ## remove .o files and the executable
 ## -rf to recursively remove files from directory
 clean:
 	rm -rf bin output/*
+
+clear:
+	clear
 
 ## make binary directory
 ## -p for removing chance of errors
