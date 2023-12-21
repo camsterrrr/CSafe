@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <string.h>
 
+#include "Common.h"
 #include "File.h"
 #include "Log.h"
 
@@ -39,14 +40,6 @@ File newFileObjParams(char *fileLocation, char *hashedMasterPW, int fd) {
 }
 
 /* MEMBER FUNCTIONS */
-int checkFuncParamsPtr(void *arbitraryPtr0, void *arbitraryPtr1) { 
-    return ((arbitraryPtr0 == NULL) || (arbitraryPtr1 == NULL)) ? 1 : 0; 
-}
-
-int checkFuncParamsInt(void *arbitraryPtr0, int arbitraryInt) { 
-    return ((arbitraryPtr0 == NULL) || (arbitraryInt == 0)) ? 1 : 0; 
-}
-
 int checkValidFileDescriptor(int fd) { return (fd > 0) ? 0 : 1; }
 
 int closeFileDescriptor (int fd) { return close(fd); }
@@ -94,48 +87,32 @@ int readFromFileDescriptor(File *fileObj, int fd) {
     // }
 
     fclose(FILE);
+
+    return 0;
 }
 
 /* GETTERS */
 char* getFileLocation(File *fileObj) {
-    //* NULL check
-    if (checkFuncParamsPtr(fileObj, (*fileObj).fileLocation)) {
-        ERROR("NULL pointers! -- getFileLocation");
-        return NULL;
-    }
+    char *retBuf = writeBufContents((*fileObj).fileLocation);
 
-    int cStrSize = strlen((*fileObj).fileLocation);
-    char *retBuf = calloc(cStrSize + 1, sizeof(char));
-    
     //* NULL check
     if (retBuf == NULL) {
-        ERROR("Error initializing buffer -- getFileLocation \n");
+        ERROR("writeBufContents failed! -- getFileLocation");
         return NULL;
     }
-
-    memcpy(retBuf, (*fileObj).fileLocation, cStrSize);
 
     return retBuf;
 }
 
 char* getHashedMasterPW(File *fileObj) {
-    //* NULL check
-    if (checkFuncParamsPtr(fileObj, (*fileObj).hashedMasterPW)) {
-        ERROR("NULL pointers! -- getHashedMasterPW");
-        return NULL;
-    }
+    char *retBuf = writeBufContents((*fileObj).hashedMasterPW);
 
-    int cStrSize = strlen((*fileObj).hashedMasterPW);
-    char *retBuf = calloc(cStrSize + 1, sizeof(char));
-    
     //* NULL check
     if (retBuf == NULL) {
-        ERROR("Error initializing buffer -- getHashedMasterPW \n");
+        ERROR("writeBufContents failed! -- getHashedMasterPW");
         return NULL;
     }
 
-    memcpy(retBuf, (*fileObj).hashedMasterPW, cStrSize);
-    
     return retBuf;
 }
 
@@ -153,65 +130,19 @@ int getFD(File *fileObj) {
 
 /* SETTERS */
 int setFileLocation(File *fileObj, char *fileLocation) {
-    //* NULL check
-    if (checkFuncParamsPtr(fileObj, fileLocation)) {
-        ERROR("NULL pointers! -- setFileLocation");
+    if (copyBufContents((*fileObj).fileLocation, fileLocation)) {
+        ERROR("copyBufContents failed! -- setFileLocation");
         return 1;
     }
-
-    int cStrSize = 0; // helper var
-
-    // wipe fileObj memory location
-    if ((*fileObj).fileLocation != NULL) {
-        cStrSize = strlen((*fileObj).fileLocation);
-        memset((*fileObj).fileLocation, 0b00000000, cStrSize);
-        free((*fileObj).fileLocation);
-    }
-    
-    // assign fileObj new memory
-    cStrSize = strlen(fileLocation);
-    (*fileObj).fileLocation = calloc(cStrSize + 1, sizeof(char));
-
-    //* NULL check
-    if ((*fileObj).fileLocation == NULL) {
-        ERROR("Memory allocation failed! -- setFileLocation");
-        return 1;
-    }
-
-    // copy data
-    memcpy((*fileObj).fileLocation, fileLocation, cStrSize);
 
     return 0;
 }
 
 int setHashedMasterPW(File *fileObj, char *hashedMasterPW) {
-    //* NULL check
-    if (checkFuncParamsPtr(fileObj, hashedMasterPW)) {
-        ERROR("NULL pointers! -- setHashedMasterPW");
+    if (copyBufContents((*fileObj).hashedMasterPW, hashedMasterPW)) {
+        ERROR("copyBufContents failed! -- setHashedMasterPW");
         return 1;
     }
-
-    int cStrSize = 0; // helper var
-
-    // wipe memory location
-    if ((*fileObj).hashedMasterPW != NULL) {
-        cStrSize = strlen((*fileObj).hashedMasterPW);
-        memset((*fileObj).hashedMasterPW, 0b00000000, cStrSize);
-        free((*fileObj).hashedMasterPW);
-    }
-
-    // assign new memory
-    cStrSize = strlen(hashedMasterPW);
-    (*fileObj).hashedMasterPW = calloc(cStrSize + 1, sizeof(char));
-
-    //* NULL check
-    if ((*fileObj).hashedMasterPW == NULL) {
-        ERROR("Memory allocation failed! -- setHashedMasterPW");
-        return 1;
-    }
-
-    // copy data
-    memcpy((*fileObj).hashedMasterPW, hashedMasterPW, cStrSize);
 
     return 0;
 }

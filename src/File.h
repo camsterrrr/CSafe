@@ -12,8 +12,7 @@
 #define FILE_H
 
 typedef struct File {
-    char *fileLocation;
-    char *hashedMasterPW;
+    char *fileLocation, *hashedMasterPW;
     int fd;
 } File;
 
@@ -22,8 +21,6 @@ File newFileObj();
 File newFileObjParams(char*, char*, int);
 
 /* MEMBER FUNCTIONS */
-int checkFuncParamsPtr(void*, void*);
-int checkFuncParamsInt(void*, int);
 int checkValidFileDescriptor(int);
 int creatFileAtLocation(char*);
 int closeFileDescriptor (int);

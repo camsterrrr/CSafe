@@ -4,8 +4,8 @@
 
 /* LIBRARIES */
 #include <fcntl.h>
-#include <iostream>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "Database.h"
@@ -18,7 +18,7 @@
 /* FUNCTION DECLARATIONS */
 void menu(unsigned int*);
 void menuSwitchBlock(unsigned int*);
-Database* newDatabase(char*);
+// Database* newDatabase(char*);
 
 /* START OF MAIN */
 int main(void) {
@@ -67,8 +67,8 @@ void menuSwitchBlock(unsigned int *userInput) {
         scanf("%s", inputBuf);
         // PRINTSTR(inputBuf);
 
-        std::string fileLocation(inputBuf);
-        int fd = creatFileAtLocation(fileLocation);
+        // std::string fileLocation(inputBuf);
+        int fd; // = creatFileAtLocation(fileLocation);
 
         if (fd <= 0) {
             ERROR("Database creation failed!\n");
@@ -86,8 +86,8 @@ void menuSwitchBlock(unsigned int *userInput) {
         scanf("%s", inputBuf);
         // PRINTSTR(inputBuf);
 
-        std::string fileLocation(inputBuf);
-        int fd = openFileAtLocation(fileLocation);
+        // std::string fileLocation(inputBuf);
+        int fd; // = openFileAtLocation(fileLocation);
 
         if (fd <= 0) {
             ERROR("Unable to read database!\n");
@@ -106,32 +106,28 @@ void menuSwitchBlock(unsigned int *userInput) {
     }
 }
 
-Database* newDatabase(char *fileLocation) {
-    printf("Your master password is used to decrypt the database. 
-        There are two considerations user's should make:\n");
-    printf("1. Master passwords unlock access to ALL stored passwords,
-        please ensure that it is secure!\n");
-    printf("2. If you forget this password, you won't be able to
-        decrypt your password database!\n");
-    printf("Enter a master password: \n");
-    printf("\t$");
+// Database* newDatabase(char *fileLocation) {
+//     printf("Your master password is used to decrypt the database. There are two considerations user\'s should make:\n");
+//     printf("1. Master passwords unlock access to ALL stored passwords, please ensure that it is secure!\n");
+//     printf("2. If you forget this password, you won\'t be able to decrypt your password database!\n");
+//     printf("Enter a master password: \n");
+//     printf("\t$");
 
-    /* USER INPUT */
-    char *plaintextMasterPWBuffer = (char*)calloc(256, sizeof(char));
-    scanf("%s", plaintextMasterPWBuffer);
+//     /* USER INPUT */
+//     char *plaintextMasterPWBuffer = (char*)calloc(256, sizeof(char));
+//     scanf("%s", plaintextMasterPWBuffer);
 
-    time_t currTimestamp;
-    time(&currTimestamp);
+//     time_t currTimestamp;
+//     time(&currTimestamp);
     
-    Database newDB = new Database(currTimestamp, currTimestamp, currTimestamp, 
-        fileLocation, plaintextMasterPWBuffer);
+//    //  Database newDB = new Database(currTimestamp, currTimestamp, currTimestamp, fileLocation, plaintextMasterPWBuffer);
 
-    /* NULL BUFFER */
-    memset(plaintextMasterPWBuffer, 0b00000000, sizeof(char));
-    memset(fileLocation, 0b00000000, sizeof(char));
+//     /* NULL BUFFER */
+//     memset(plaintextMasterPWBuffer, 0b00000000, sizeof(char));
+//     memset(fileLocation, 0b00000000, sizeof(char));
 
-    return newDB; 
-}
+//     return NULL; // newDB; 
+// }
 // * calloc: https://en.cppreference.com/w/c/memory/calloc 
 // * memset: https://en.cppreference.com/w/cpp/string/byte/memset
 

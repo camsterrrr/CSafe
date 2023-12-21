@@ -3,51 +3,55 @@
 */
 
 /* LIBRARIES */
-#include <string>
-#include <pthread.h>
+// #include <pthread.h>
+#include <time.h>
+
+#include "File.h"
+#include "Password.h"
 
 /* START OF DATABASE CLASS */
 #ifndef DATABASE_H
 #define DATABASE_H
 
-class Database {
-    public:
-        /* CONSTRUCTORS*/
-        Database();
-        Database(time_t, time_t, time_t, std::string, std::string);
-        /* MEMBER FUNCTIONS */
-    
-        bool deleteDB(std::string);
-        bool updateMasterPW(std::string, std::string);
-        bool verifyMasterPW(std::string);
-        int writeDataToFile(std::string);
-        /* LOCKS */
-        /* GETTERS */
-        int getNumReaders();
-        int getNumWriters();
-        time_t getCreateTimestamp();
-        time_t getLastAccessedTimestamp();
-        time_t getLastModifiedTimestamp();
-        std::string getFileLocation();
-        std::string getMasterPWHash();
-        /* SETTERS */
-        void setCreateTimestamp(time_t);
-        void setFileLocation(std::string);
-        void setLastAccessedTimestamp(time_t);
-        void setLastModifiedTimestamp(time_t);
-        void setMasterPWHash(std::string);
-        void setNumReaders(int);
-        void setNumWriters(int);
+typedef struct Database {
+    char *saltVal;
+    File *fileObj;
+    int numReaders, numWriters;
+    Password *passwordObj;
+    time_t createTS, lastAccessedTS, lastModifiedTS;
+} Database;
 
-    /* MEMBER VARIABLES */
-    private:
-        time_t createTimestamp, lastAccessedTimestamp, lastModifiedTimestamp;
-        int numReaders, numWriters;
-        pthread_mutex_t mutex;
-        pthread_cond_t canRead, canWrite;
-        std::string fileLocation, masterPWHash, saltVal;
+/* CONSTRUCTORS*/
+Database newDatabase();
+Database newDatabaseParams(char*);
 
-};
+/* MEMBER FUNCTIONS */
+int deleteDB(char*);
+int updateMasterPW(char*, char*);
+int verifyMasterPW(char*);
+int writeDataToFile(char*);
+
+/* LOCKS */
+
+/* GETTERS */
+char* getSaltVal(Database*);
+File* getFileObj(Database*);
+int getNumReaders(Database*);
+int getNumWriters(Database*);
+Password* getPasswordObj(Database*);
+time_t getCreateTS(Database*);
+time_t getLastAccessedTS(Database*);
+time_t getLastModifiedTS(Database*);
+
+/* SETTERS */
+int setSaltVal(Database*, char*);
+int setFileObj(Database*, File*);
+int setNumReaders(Database*, int);
+int setNumWriters(Database*, int);
+int setPasswordObj(Database*, Password*);
+int setCreateTS(Database*, time_t);
+int setLastAccessedTS(Database*, time_t);
+int setLastModifiedTS(Database*, time_t);
 
 #endif
 

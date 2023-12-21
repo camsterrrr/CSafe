@@ -1,15 +1,14 @@
 /**
- * 
+ * Simple class used for logging purposes. Offers five different logging levels.
 */
 
 /* LIBRARIES */
-
+#include <stdio.h>
 
 /* START OF FILE CLASS */
 #ifndef LOG_H
 #define LOG_H
 
-/* PREPROCESSING STATEMENTS */
 /** LOGGING FUNCTIONS
  * DEBUG: info that is useful to devs.
  * ERROR: errors that crash a function.
@@ -23,14 +22,6 @@
 #define INFO(...) fprintf(stderr, "INFO:\t"); fprintf(stderr, __VA_ARGS__);
 #define WARN(...) fprintf(stderr, "WARN:\t"); fprintf(stderr, __VA_ARGS__);
 #define PRINTSTR(...) fprintf(stderr, "%s\n", __VA_ARGS__);
-
-/* CONSTRUCTORS*/
-
-/* MEMBER FUNCTIONS */
-
-/* GETTERS */
-
-/* SETTERS */
 
 #endif 
 

@@ -1,13 +1,9 @@
 # VARIABLES
-CXX = g++
-CXXFLAGS = -std=c++11 	##
-CPPFLAGS = -I./src/objs ## -I represents an include statement
 CC = gcc
-# CFLAGS = 
-
+CFLAGS = -Wall # I./src/objs ## -I represents an include statement
 LDLIBS = -lcrypto 		## -l represents a binary in ...(some folder in the FS) ...
 HEADERS = $(wildcard src/*.h)
-SRCS = $(wildcard src/*.cpp)
+SRCS = $(wildcard src/*.c)
 TEST = $(wildcard tests/*.c)
 OBJS = $(SRCS:src/%.c=bin/%.o)
 ### TESTS = $(wildcard test/*.c)
@@ -24,7 +20,7 @@ all: clean bin ${MAIN_TARGET}
 
 ## build the debug executable
 debug: clean bin $(OBJS) 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) debug.cpp -o bin/$@ $(LDLIBS)
+	$(CC) $(CFLAGS) debug.cpp -o bin/$@ $(LDLIBS)
 	bin/debug
 
 unittest: clean bin bin/File.o $(TEST)
@@ -36,10 +32,10 @@ bin/File.o: src/File.c
 
 
 $(MAIN_TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o bin/$@ $(OBJS) $(LDLIBS)
+	$(CC) $(CFLAGS) -o bin/$@ $(OBJS) $(LDLIBS)
 
 bin/%.o: src/%.c
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 ## remove .o files and the executable
 ## -rf to recursively remove files from directory
