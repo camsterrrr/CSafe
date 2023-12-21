@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "../../src/Common.h"
+#include "../../src/Log.h"
 
 TestSuite(Common, .disabled=false);
 
@@ -10,7 +11,7 @@ Test(Common, copyBufContents0) {
     char *dest = NULL;
 
     cr_assert(dest == NULL);
-    copyBufContents(dest, src); 
+    copyBufContents(&dest, &src); 
     cr_assert(strcmp(dest, src) == 0); 
 }
 
@@ -19,7 +20,7 @@ Test(Common, copyBufContents1) {
     char *dest = "!C yb C ni nettirw saw efaSC";
 
     cr_assert(dest != NULL);
-    copyBufContents(dest, src); 
+    copyBufContents(&dest, &src); 
     cr_assert(strcmp(dest, src) == 0); 
 }
 
@@ -65,6 +66,7 @@ Test(Common, strLen) {
     len = strLen(dest);
     cr_assert(len == -1);
 
+    copyBufContents(&dest, &src); 
     cr_assert(strcmp(dest, src) == 0); 
     len = strLen(dest);
     cr_assert(len == strLen(src));
