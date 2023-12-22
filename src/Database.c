@@ -41,12 +41,16 @@ Database newDatabaseParams(char *fileLocation) {
         .lastModifiedTS = 0,
     };
 
-    time_t ts = time(NULL);
+    // File *fileObj = newFileObjParams()
+    // Password *passwordObj = newPasswordObj();
+
     // setSaltVal(&dbObjm, )
     // setFileLocation(&dbObj, );
     // setMasterPWHash(&dbObj, );
     setNumReaders(&dbObj, 1);
     setNumWriters(&dbObj, 1);
+
+    time_t ts = time(NULL);
     setCreateTS(&dbObj, ts);
     setLastAccessedTS(&dbObj, ts);
     setLastModifiedTS(&dbObj, ts);
@@ -55,7 +59,25 @@ Database newDatabaseParams(char *fileLocation) {
 }
 
 /* MEMBER FUNCTIONS */
+char* enterPlaintextMasterPW() {
+    char *inputBuf = (char*)calloc(256, sizeof(char));
+    
+    passwordPrompt();
 
+    //* USER INPUT
+    scanf("%s", inputBuf);
+
+
+
+    return inputBuf;
+}
+
+void passwordPrompt() {
+    printf("Enter a master password for your database!\n");
+    printf("When creating this password, there are two things you should consider...\n");
+    printf("\t1. This password will be used to ACCESS  ALL of your passwords, so don't forget it.\n");
+    printf("\t2. This password should be secure enough to PROTECT ALL of your passwords.\n");
+}
 
 /* LOCKS */
 

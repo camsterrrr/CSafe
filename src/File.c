@@ -4,6 +4,7 @@
 /* LIBRARIES */
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "Common.h"
 #include "File.h"
@@ -40,11 +41,28 @@ File newFileObjParams(char *fileLocation, char *hashedMasterPW, int fd) {
 }
 
 /* MEMBER FUNCTIONS */
+char* enterFileLocation() {
+    char *inputBuf = (char*)calloc(256, sizeof(char));
+
+    printf("\tEnter file location:\n");
+    printf("\t$ ");
+
+    //* USER INPUT
+    scanf("%s", inputBuf);
+
+    return inputBuf;
+}
+
 int checkValidFileDescriptor(int fd) { return (fd > 0) ? 0 : 1; }
 
 int closeFileDescriptor (int fd) { return close(fd); }
 
 int creatFileAtLocation(char *fileLocation) {
+    if (checkFuncParamPtr(fileLocation)) {
+        ERROR("NULL pointer! -- creatFileAtLocation");
+        return 1;
+    }
+
     int fd = creat(fileLocation, O_RDWR);
 
     //* Error check
@@ -57,6 +75,10 @@ int creatFileAtLocation(char *fileLocation) {
 }
 
 int openFileAtLocation(char *fileLocation) {
+    if (checkFuncParamPtr(fileLocation)) {
+        ERROR("NULL pointer! -- openFileAtLocation");
+        return 1;
+    }
     int fd = open(fileLocation, O_RDONLY);
 
     //* Error check
@@ -69,6 +91,11 @@ int openFileAtLocation(char *fileLocation) {
 }
 
 int readFromFileDescriptor(File *fileObj, int fd) {
+    if (checkFuncParamPtr(fileObj)) {
+        ERROR("NULL pointer! -- readFromFileDescriptor");
+        return 1;
+    }
+
     FILE *FILE = fdopen(fd, "r");
 
     //* NULL check
@@ -87,6 +114,20 @@ int readFromFileDescriptor(File *fileObj, int fd) {
     // }
 
     fclose(FILE);
+
+    return 0;
+}
+
+int unlinkFromFileDescriptor(char *fileLocation) {
+    if (checkFuncParamPtr(fileLocation)) {
+        ERROR("NULL pointer! -- unlinkFromFileDescriptor");
+        return 1;
+    }
+
+    if (unlink(fileLocation) == -1) {
+        ERROR("unlink failed! -- unlinkFromFileDescriptor");
+        return 1;
+    }
 
     return 0;
 }
@@ -130,7 +171,7 @@ int getFD(File *fileObj) {
 
 /* SETTERS */
 int setFileLocation(File *fileObj, char *fileLocation) {
-    if (copyBufContents((*fileObj).fileLocation, fileLocation)) {
+    if (copyBufContents(&(*fileObj).fileLocation, &fileLocation)) {
         ERROR("copyBufContents failed! -- setFileLocation");
         return 1;
     }
@@ -139,7 +180,7 @@ int setFileLocation(File *fileObj, char *fileLocation) {
 }
 
 int setHashedMasterPW(File *fileObj, char *hashedMasterPW) {
-    if (copyBufContents((*fileObj).hashedMasterPW, hashedMasterPW)) {
+    if (copyBufContents(&(*fileObj).hashedMasterPW, &hashedMasterPW)) {
         ERROR("copyBufContents failed! -- setHashedMasterPW");
         return 1;
     }

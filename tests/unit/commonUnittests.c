@@ -71,3 +71,15 @@ Test(Common, strLen) {
     len = strLen(dest);
     cr_assert(len == strLen(src));
 }
+
+Test(Common, clearBuf) {
+    char *buf0 = "CSafe was written in C by C!";
+    int val0;
+
+    cr_assert(buf0 != NULL);
+
+    val0 = clearBuf(&buf0);
+
+    cr_assert(buf0 == NULL);
+    cr_assert(val0 == 0);
+}

@@ -56,7 +56,6 @@ Password newPasswordObjParams(char* plaintextPW, char *hashedPW,
 
 /* MEMBER FUNCTIONS */
 
-
 /* GETTERS */
 char* getPlaintextPW(Password *passwordObj) {
     char *retBuf = writeBufContents((*passwordObj).hashedPW);

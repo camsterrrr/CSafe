@@ -13,6 +13,7 @@
 int checkFuncParamPtr(void*);
 int checkFuncParamsPtrs(void*, void*);
 int checkFuncParamsInt(void*, int);
+int clearBuf(char**);
 int copyBufContents(char**, char**);
 char* writeBufContents(char*);
 int strLen(char*);

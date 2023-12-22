@@ -38,9 +38,6 @@ int main(void) {
 /* END OF MAIN */
 
 /* FUNCTION DEFINITIONS */
-/**
- * 
-*/
 void menu(unsigned int *userInput) {
     printf("============ WELCOME TO CSafe ============\n");
     printf("\t0. End program.\n");
@@ -54,33 +51,30 @@ void menu(unsigned int *userInput) {
 }
 
 void menuSwitchBlock(unsigned int *userInput) {
-    char *inputBuf = (char*)calloc(256, sizeof(char));
+    /* CREATE NEW DATABASE */
     if (*userInput == 1) {
-        printf("\tEnter file location:\n");
-        printf("\t$ ");
-
-        /* USER INPUT */
-        scanf("%s", inputBuf);
-        // PRINTSTR(inputBuf);
-
-        // std::string fileLocation(inputBuf);
-        int fd; // = creatFileAtLocation(fileLocation);
+        char *inputBuf = enterFileLocation();
+        int fd = creatFileAtLocation(inputBuf);
 
         if (fd <= 0) {
             ERROR("Database creation failed!\n");
             return;
         }
 
+        char *plaintextPW = enterPlaintextMasterPW();
+
+
+
+        Database dbObj = newDatabaseParams();
+
         // readFromFileDescriptor(fd);
 
         closeFileDescriptor(fd);
-    } else if (*userInput == 2) {
-        printf("\tEnter file location:\n");
-        printf("\t$ ");
-
-        /* USER INPUT */
-        scanf("%s", inputBuf);
-        // PRINTSTR(inputBuf);
+    } 
+    
+    /* OPEN EXISTING DATABASE*/
+    else if (*userInput == 2) {
+        char *inputBuf = enterFileLocation();
 
         // std::string fileLocation(inputBuf);
         int fd; // = openFileAtLocation(fileLocation);
@@ -93,13 +87,7 @@ void menuSwitchBlock(unsigned int *userInput) {
         // READ DATA
 
         closeFileDescriptor(fd);
-    } else if (*userInput == 3) {
-        
-    } else if (*userInput == 4) {
-        
-    }  else {
-
-    }
+    } 
 }
 
 /* END OF FILE */

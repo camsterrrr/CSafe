@@ -21,11 +21,13 @@ File newFileObj();
 File newFileObjParams(char*, char*, int);
 
 /* MEMBER FUNCTIONS */
+char* enterFileLocation();
 int checkValidFileDescriptor(int);
 int creatFileAtLocation(char*);
 int closeFileDescriptor (int);
 int openFileAtLocation(char*);
 int readFromFileDescriptor(File*, int);
+int unlinkFromFileDescriptor(char*);
 
 /* GETTERS */
 char* getFileLocation(File*);

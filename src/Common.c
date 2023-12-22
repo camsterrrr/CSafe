@@ -25,10 +25,23 @@ int checkFuncParamsInt(void *arbitraryPtr0, int arbitraryInt) {
     return ((arbitraryPtr0 == NULL) || (arbitraryInt == 0)) ? 1 : 0; 
 }
 
+int clearBuf(char **arbitraryBuf) {
+    if (checkFuncParamPtr((*arbitraryBuf))) {
+        ERROR("NULL pointer! -- clearBuf");
+        return 1;
+    }
+
+    int cStrSize = strLen((*arbitraryBuf));
+    memset(&(*arbitraryBuf), 0, cStrSize);
+    free((*arbitraryBuf));
+
+    return 0;
+}
+
 int copyBufContents(char** dest, char **src) {
     //* NULL check
     if (checkFuncParamPtr((*src))) {
-        ERROR("NULL pointers! -- copyBufContents");
+        ERROR("NULL pointer! -- copyBufContents");
         return 1;
     }
 
@@ -36,9 +49,10 @@ int copyBufContents(char** dest, char **src) {
 
     // wipe memory location
     if ((*dest) != NULL) {
-        cStrSize = strlen((*dest));
-        memset(&(*dest), 0, cStrSize);
-        free((*dest));
+        clearBuf(dest);
+        // cStrSize = strlen((*dest));
+        // memset(&(*dest), 0, cStrSize);
+        // free((*dest));
     }
 
     // assign new memory

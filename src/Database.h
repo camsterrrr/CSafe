@@ -26,10 +26,12 @@ Database newDatabase();
 Database newDatabaseParams(char*);
 
 /* MEMBER FUNCTIONS */
+char* enterPlaintextMasterPW();
 int deleteDB(char*);
 int updateMasterPW(char*, char*);
 int verifyMasterPW(char*);
 int writeDataToFile(char*);
+void passwordPrompt();
 
 /* LOCKS */
 
