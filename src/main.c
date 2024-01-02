@@ -61,7 +61,7 @@ void menuSwitchBlock(unsigned int *userInput) {
             return;
         }
 
-        char *plaintextPW = enterPlaintextMasterPW();
+        char *returnedHashedPW = enterPlaintextMasterPW();
 
 
 
