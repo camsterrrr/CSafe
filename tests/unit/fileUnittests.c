@@ -10,47 +10,127 @@ Test(File, constructorFileObj0) {
     File fileObj = newFileObj();
 
     cr_assert_eq(fileObj.fileLocation, NULL);
-    cr_assert_eq(fileObj.hashedMasterPW, NULL);
     cr_assert_eq(fileObj.fd, 0);
 }
 
 Test(File, constructorFileObj1) {
-    char *buf0 = "File location", *buf1 = "Hashed password";
-    int val0 = 1000;
-    File fileObj = newFileObjParams(buf0, buf1, val0);
+    char *fileLocation = "File location";
+    int fd = 1000;
+    File fileObj = newFileObj();
 
-    cr_assert(strcmp(fileObj.fileLocation, buf0) == 0);
-    cr_assert(strcmp(fileObj.hashedMasterPW, buf1) == 0);
-    cr_assert(fileObj.fd == val0);
+    setFileLocation(&fileObj, fileLocation);
+    setFD(&fileObj, fd);
+
+    cr_assert(strcmp(fileObj.fileLocation, fileLocation) == 0);
+    cr_assert(fileObj.fd == fd);
 }
 
 Test(File, constructorFileObj2) {
-    char *buf0 = "File location", *buf1 = "Hashed password";
-    int val0 = 1000;
-    File fileObj = newFileObjParams(buf0, buf1, val0);
+    char *fileLocation = "File location";
+    int fd = 1000;
+    File fileObj = newFileObj();
 
-    char *buf2, *buf3;
-    int val1;
+    setFileLocation(&fileObj, fileLocation);
+    setFD(&fileObj, fd);
 
-    buf2 = getFileLocation(&fileObj);
-    buf3 = getHashedMasterPW(&fileObj);
-    val1 = getFD(&fileObj);
+    char *retFileLocation = getFileLocation(&fileObj);
+    int retFD = getFD(&fileObj);
 
-    cr_assert(strcmp(buf2, buf0) == 0);
-    cr_assert(strcmp(buf3, buf1) == 0);
-    cr_assert(val1 == val0);
+    cr_assert(strcmp(retFileLocation, fileLocation) == 0);
+    cr_assert(retFD == fd);
 
     /* Verify we are pointing to a new location */
-    cr_assert(buf2 != buf0); // ptrs should NOT be the same address
-    cr_assert(buf3 != buf1);
+    cr_assert(fileLocation != retFileLocation); // ptrs should NOT be the same address
 }
 
-// Test(File, creatFileAtLocation1) {
-//     char *buf0 = "./output/creatFileAtLocation";
+Test(File, creatFileLocation0) {
+    char *fileLocation = NULL;
 
-//     int val0 = creatFileAtLocation(buf0);
-//     cr_assert(val0 != -1);
+    int fd = creatFileLocation(fileLocation);
+    cr_assert(fd == -1);
+}
 
-//     int val1 = unlinkFromFileDescriptor(buf0);
-//     cr_assert(val1 == 0);
-// }
+Test(File, creatFileLocation1) {
+    char *fileLocation = "./output/creatFileLocation1";
+
+    int fd = creatFileLocation(fileLocation);
+    cr_assert(fd != -1);
+    close(fd);
+}
+
+Test(File, creatFileLocation2) {
+    char *fileLocation = "./output/creatFileLocation2";
+
+    int fd = creatFileLocation(fileLocation);
+    cr_assert(fd != -1);
+    close(fd); // must close fd in order to unlink it
+
+    int retVal = unlinkFileLocation(fileLocation);
+    cr_assert(retVal == 0);
+}
+
+Test(File, openFileLocation0) {
+    char *fileLocation = "./output/openFileLocation0";
+
+    int fd = openFileLocation(fileLocation);
+    cr_assert(fd == -1);
+}
+
+Test(File, openFileLocation1) {
+    char *fileLocation = "./output/openFileLocation1";
+
+    int creatFD = creatFileLocation(fileLocation);
+    // close(creatFD);
+    int openFD = openFileLocation(fileLocation);
+    cr_assert(openFD != creatFD); // close(creatFD) on line 83 changes the result
+
+    close(creatFD);
+    close(openFD);
+
+    int unlinkVal = unlinkFileLocation(fileLocation);
+    cr_assert(unlinkVal == 0);
+}
+
+Test(File, unlinkFileLocation0) {
+    char *fileLocation = NULL; 
+
+    int unlinkVal = unlinkFileLocation(fileLocation);
+    cr_assert(unlinkVal == -1);
+}
+
+Test(File, unlinkFileLocation1) {
+    char *fileLocation = "./output/creatFileLocation1"; // delete leftover file
+
+    int unlinkVal = unlinkFileLocation(fileLocation);
+    cr_assert(unlinkVal == 0);
+}
+
+Test(File, writeFileDescriptor0) {
+    char *dataToWrite = NULL; 
+    int arbitraryInt = 1;
+
+    int writeVal = writeFileDescriptor(arbitraryInt, dataToWrite);
+    cr_assert(writeVal == -1);
+}
+
+Test(File, writeFileDescriptor1) {
+    char *fileLocation = "./output/writeFileDescriptor1";
+    int creatFD = creatFileLocation(fileLocation);
+
+    char *dataToWrite = "CSafe was written in C by C!";
+    int writeVal = writeFileDescriptor(creatFD, dataToWrite);
+
+    // intentionally not unlinking the file
+}
+
+Test(File, writeFileDescriptor2) {
+    // append data to file created in last unit test
+
+    char *fileLocation = "./output/writeFileDescriptor1";
+    int creatFD = creatFileLocation(fileLocation);
+
+    char *dataToWrite = "CSafe was written in C by C!";
+    int writeVal = writeFileDescriptor(creatFD, dataToWrite);
+
+    // intentionally not unlinking the file
+}

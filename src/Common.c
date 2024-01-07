@@ -105,4 +105,13 @@ int strLen(char *src) {
     return src == NULL ? -1 : strlen(src);
 }
 
+void displayHashInHex(char *arbitraryHash) {
+    if (checkFuncParamPtr(arbitraryHash) == 0) {
+        for (int i = 0; i < SHA1_BYTES; i++) {
+            printf("%x", (unsigned char)arbitraryHash[i]);
+        }
+        printf("\n");
+    }
+}
+
 /* END OF PASSWORD CLASS IMPLEMENTATION */

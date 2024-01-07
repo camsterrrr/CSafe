@@ -23,12 +23,12 @@ all: clean bin ${MAIN_TARGET} clear
 Wall: clean bin ${MAIN_TARGET}
 
 ## build the debug executable
-debug: clean bin $(OBJS) clear
-	$(CC) $(CFLAGS) $@.c -o bin/$@ $(LDLIBS)
+debug: clean bin $(TESTOBJS) clear
+	$(CC) $(CFLAGS) $@.c -o bin/$@ $(TESTOBJS) $(LDLIBS)
 	bin/$@
 
 unittest: clean bin $(TESTOBJS) $(UNITTESTS) clear
-	$(CC) $(CFLAGS) $(UNITTESTS) -o bin/$@ $(TESTOBJS)
+	$(CC) $(CFLAGS) $(UNITTESTS) -o bin/$@ $(TESTOBJS) $(LDLIBS)
 	bin/unittest
 
 $(MAIN_TARGET): $(OBJS)
@@ -40,7 +40,7 @@ bin/%.o: src/%.c $(HEADERS)
 ## remove .o files and the executable
 ## -rf to recursively remove files from directory
 clean:
-	rm -rf bin output/*
+	rm -rf bin
 
 clear:
 	clear

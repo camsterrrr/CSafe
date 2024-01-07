@@ -19,25 +19,28 @@
 File newFileObj() {
     File fileObj = {
         .fileLocation = NULL, 
-        .hashedMasterPW = NULL, 
         .fd = 0,
     };
 
     return fileObj;
 }
 
-File newFileObjParams(char *fileLocation, char *hashedMasterPW, int fd) {
-    File fileObj = {
-        .fileLocation = NULL, 
-        .hashedMasterPW = NULL, 
-        .fd = 0,
-    };
+File* newFileObj_() {
+    File fileObj = newFileObj();
+
+    //* USER INPUT
+    char *fileLocation = enterFileLocation();
+    int fd = creatFileLocation(fileLocation);
+
+    if (fd == -1) {
+        ERROR("File creation failed! -- newFileObj_\n");
+        return NULL;
+    }
 
     setFileLocation(&fileObj, fileLocation);
-    setHashedMasterPW(&fileObj, hashedMasterPW);
     setFD(&fileObj, fd);
 
-    return fileObj;
+    return &fileObj;
 }
 
 /* MEMBER FUNCTIONS */
@@ -57,42 +60,52 @@ int checkValidFileDescriptor(int fd) { return (fd > 0) ? 0 : 1; }
 
 int closeFileDescriptor (int fd) { return close(fd); }
 
-int creatFileAtLocation(char *fileLocation) {
+int creatFileLocation(char *fileLocation) {
     if (checkFuncParamPtr(fileLocation)) {
-        ERROR("NULL pointer! -- creatFileAtLocation");
-        return 1;
-    }
-
-    int fd = creat(fileLocation, O_RDWR);
-
-    //* Error check
-    if (checkValidFileDescriptor(fd)) {
-        ERROR("Unable to open file descriptor! -- creatFileAtLocation\n");
+        ERROR("NULL pointer! -- creatFileAtLocation\n");
         return -1;
     }
 
-    return fd;
-}
-
-int openFileAtLocation(char *fileLocation) {
-    if (checkFuncParamPtr(fileLocation)) {
-        ERROR("NULL pointer! -- openFileAtLocation");
-        return 1;
+    // check if file already exists, otherwise it will rewrite it (lose all data)
+    int openFD = openFileLocation(fileLocation);
+    if (openFD != -1) {
+        INFO("File location already exists! -- creatFileLocation\n");
+        return openFD;
     }
-    int fd = open(fileLocation, O_RDONLY);
+
+    mode_t mode = O_RDWR;
+    int creatFD = creat(fileLocation, mode);
 
     //* Error check
-    if (checkValidFileDescriptor(fd)) {
-        ERROR("Unable to open file descriptor! -- openFileAtLocation\n");
+    if (checkValidFileDescriptor(creatFD)) {
+        ERROR("Unable to open file descriptor! -- creatFileLocation\n");
         return -1;
     }
 
-    return fd;
+    return creatFD;
 }
 
-int readFromFileDescriptor(File *fileObj, int fd) {
+int openFileLocation(char *fileLocation) {
+    if (checkFuncParamPtr(fileLocation)) {
+        ERROR("NULL pointer! -- openFileLocation\n");
+        return 1;
+    }
+
+    mode_t mode = O_RDONLY;
+    int openFD = open(fileLocation, mode);
+
+    //* Error check
+    if (checkValidFileDescriptor(openFD)) {
+        ERROR("Unable to open file descriptor! -- openFileLocation\n");
+        return -1;
+    }
+
+    return openFD;
+}
+
+int readFileDescriptor(File *fileObj, int fd) {
     if (checkFuncParamPtr(fileObj)) {
-        ERROR("NULL pointer! -- readFromFileDescriptor");
+        ERROR("NULL pointer! -- readFromFileDescriptor\n");
         return 1;
     }
 
@@ -100,11 +113,11 @@ int readFromFileDescriptor(File *fileObj, int fd) {
 
     //* NULL check
     if (FILE == NULL) {
-        ERROR("Unable to open file descriptor!\n");
+        ERROR("Unable to open file descriptor! -- readFromFileDescriptor\n");
         return -1;
     }
 
-    /* This will be annoying to write */
+    //! This will be annoying to write 
     //- scan ahead for special chars
     // char buffer[256];
     // std::string fileContents = "";
@@ -118,18 +131,34 @@ int readFromFileDescriptor(File *fileObj, int fd) {
     return 0;
 }
 
-int unlinkFromFileDescriptor(char *fileLocation) {
+int unlinkFileLocation(char *fileLocation) {
     if (checkFuncParamPtr(fileLocation)) {
-        ERROR("NULL pointer! -- unlinkFromFileDescriptor");
-        return 1;
+        ERROR("NULL pointer! -- unlinkFileLocation\n");
+        return -1;
     }
 
     if (unlink(fileLocation) == -1) {
-        ERROR("unlink failed! -- unlinkFromFileDescriptor");
-        return 1;
+        ERROR("unlink failed! File was not deleted. -- unlinkFileLocation\n");
+        return -1;
     }
 
     return 0;
+}
+
+size_t writeFileDescriptor(int fd, char *dataToWrite) {
+    if (checkFuncParamPtr(dataToWrite)) {
+        ERROR("NULL pointer! -- writeFileDescriptor\n");
+        return -1;
+    }
+
+    size_t count = strLen(dataToWrite) + 1;
+    size_t writeVal = write(fd, dataToWrite, count);
+
+    if (writeVal == -1) {
+        ERROR("write failed! No bytes were written. -- writeFileDescriptor\n");
+    }
+
+    return writeVal;
 }
 
 /* GETTERS */
@@ -138,19 +167,7 @@ char* getFileLocation(File *fileObj) {
 
     //* NULL check
     if (retBuf == NULL) {
-        ERROR("writeBufContents failed! -- getFileLocation");
-        return NULL;
-    }
-
-    return retBuf;
-}
-
-char* getHashedMasterPW(File *fileObj) {
-    char *retBuf = writeBufContents((*fileObj).hashedMasterPW);
-
-    //* NULL check
-    if (retBuf == NULL) {
-        ERROR("writeBufContents failed! -- getHashedMasterPW");
+        ERROR("writeBufContents failed! -- getFileLocation\n");
         return NULL;
     }
 
@@ -160,7 +177,7 @@ char* getHashedMasterPW(File *fileObj) {
 int getFD(File *fileObj) {
     //* NULL check
     if (checkFuncParamsInt(fileObj, (*fileObj).fd)) {
-        ERROR("NULL pointers! -- getFD");
+        ERROR("NULL pointers! -- getFD\n");
         return -1;
     }
 
@@ -172,16 +189,7 @@ int getFD(File *fileObj) {
 /* SETTERS */
 int setFileLocation(File *fileObj, char *fileLocation) {
     if (copyBufContents(&(*fileObj).fileLocation, &fileLocation)) {
-        ERROR("copyBufContents failed! -- setFileLocation");
-        return 1;
-    }
-
-    return 0;
-}
-
-int setHashedMasterPW(File *fileObj, char *hashedMasterPW) {
-    if (copyBufContents(&(*fileObj).hashedMasterPW, &hashedMasterPW)) {
-        ERROR("copyBufContents failed! -- setHashedMasterPW");
+        ERROR("copyBufContents failed! -- setFileLocation\n");
         return 1;
     }
 
@@ -191,7 +199,7 @@ int setHashedMasterPW(File *fileObj, char *hashedMasterPW) {
 int setFD(File *fileObj, int fd) {
     //* NULL check
     if (checkFuncParamsInt(fileObj, fd)) {
-        ERROR("NULL pointers! -- setFD");
+        ERROR("NULL pointers! -- setFD\n");
         return 1; 
     }
 

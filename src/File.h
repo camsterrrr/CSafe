@@ -12,31 +12,30 @@
 #define FILE_H
 
 typedef struct File {
-    char *fileLocation, *hashedMasterPW;
+    char *fileLocation;
     int fd;
 } File;
 
 /* CONSTRUCTORS */
 File newFileObj();
-File newFileObjParams(char*, char*, int);
+File* newFileObj_();
 
 /* MEMBER FUNCTIONS */
 char* enterFileLocation();
 int checkValidFileDescriptor(int);
-int creatFileAtLocation(char*);
+int creatFileLocation(char*);
 int closeFileDescriptor (int);
-int openFileAtLocation(char*);
-int readFromFileDescriptor(File*, int);
-int unlinkFromFileDescriptor(char*);
+int openFileLocation(char*);
+int readFileDescriptor(File*, int);
+int unlinkFileLocation(char*);
+size_t writeFileDescriptor(int, char*);
 
 /* GETTERS */
 char* getFileLocation(File*);
-char* getHashedMasterPW(File*);
 int getFD(File*);
 
 /* SETTERS */
 int setFileLocation(File*, char*);
-int setHashedMasterPW(File*, char*);
 int setFD(File*, int);
 
 #endif 

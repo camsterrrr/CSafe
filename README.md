@@ -15,8 +15,8 @@ This project serves as a way for me to work on a project **by myself** and use a
 |--- (d) bin			stores binary object files
 |--- (d) src 			stores source C and header files
 |--- (d) tests
-|			|--- unit 	stores unit tests
-|			|--- e2e 	stores end-to-end tests
+|		|--- (d) unit 	stores unit tests
+|		|--- (d) e2e 	stores end-to-end tests
 |--- (-) agile.md  		development and goal tracking
 |--- (-) README.md		what you're currently reading
 

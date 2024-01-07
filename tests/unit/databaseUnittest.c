@@ -1,6 +1,7 @@
 #include <criterion/criterion.h>
-#include <string.h>
+#include <openssl/sha.h>
 
+#include "../../src/Common.h"
 #include "../../src/Database.h"
 #include "../../src/Log.h"
 
@@ -14,12 +15,28 @@ TestSuite(Database, .disabled=false);
 //     cr_assert_eq(fileObj.fd, 0);
 // }
 
-// Test(File, enterPlaintextMasterPW0) {
-//     char *buf0 = "File location", *buf1 = "Hashed password";
-//     int val0 = 1000;
-//     File fileObj = newFileObjParams(buf0, buf1, val0);
 
-//     cr_assert(strcmp(fileObj.fileLocation, buf0) == 0);
-//     cr_assert(strcmp(fileObj.hashedMasterPW, buf1) == 0);
-//     cr_assert(fileObj.fd == val0);
+//! In order to make this test work, I need to compare the hex of retBuf against string of sha1Buf
+// Test(Database, hashPlaintextMasterPW0) {
+//     char *plaintextBuf = "Hello, world!";
+
+//     char *sha1Buf = "943a702d06f34599aee1f8da8ef9f7296031d699";
+
+//     char *retBuf = hashPlaintextPassword(plaintextBuf);
+
+//     printf("%s\n", sha1Buf);
+//     displayHashInHex(retBuf);
+
+//     cr_assert(strcmp(retBuf, sha1Buf) == 0);
 // }
+
+Test(Database, hashPlaintextMasterPW1) {
+    char *plaintextBuf = "Hello, world!";
+
+    char *sha1Buf = (char*)calloc(20, sizeof(char));
+    SHA1((unsigned char*)plaintextBuf, strLen(plaintextBuf), (unsigned char*)sha1Buf);
+
+    char *retBuf = hashPlaintextPassword(plaintextBuf);
+
+    cr_assert(strcmp(retBuf, sha1Buf) == 0);
+}

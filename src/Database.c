@@ -3,6 +3,7 @@
 */
 
 /* PREPROCESSING STATEMENTS */
+#include <openssl/sha.h>
 
 #include "Common.h"
 #include "Database.h"
@@ -15,10 +16,11 @@
  * This function serves as the default constructor of the Database class.
 */
 Database newDatabase() {
+    File fileObj = newFileObj();
+
     Database dbObj = {
-        .saltVal = NULL,
-        .fileObj = NULL,
-        .passwordObj = NULL,
+        .fileObj = &fileObj,
+        .hashedMasterPW = NULL,
         .numReaders = 0,
         .numWriters = 0,
         .createTS = 0, 
@@ -29,24 +31,18 @@ Database newDatabase() {
     return dbObj;
 }
 
-Database newDatabaseParams(char *fileLocation) {
-    Database dbObj = {
-        .saltVal = NULL,
-        .fileObj = NULL,
-        .passwordObj = NULL,
-        .numReaders = 0,
-        .numWriters = 0,
-        .createTS = 0, 
-        .lastAccessedTS = 0,
-        .lastModifiedTS = 0,
-    };
+Database newDatabaseParams_() {
+    Database dbObj = newDatabase();
 
-    // File *fileObj = newFileObjParams()
-    // Password *passwordObj = newPasswordObj();
+    //* USER INPUT
+    File *fileObj = newFileObj_();
+    setFileObj(&dbObj, fileObj);
+    
+    //* USER INPUT
+    char *plaintextPW = enterPlaintextMasterPW();
+    char *hashedMasterPW = hashPlaintextPassword(plaintextPW);
+    setHashedMasterPW(&dbObj, hashedMasterPW);
 
-    // setSaltVal(&dbObjm, )
-    // setFileLocation(&dbObj, );
-    // setMasterPWHash(&dbObj, );
     setNumReaders(&dbObj, 1);
     setNumWriters(&dbObj, 1);
 
@@ -67,27 +63,47 @@ char* enterPlaintextMasterPW() {
     //* USER INPUT
     scanf("%s", inputBuf);
 
-
+    if (checkFuncParamPtr(inputBuf) == 1) {
+        ERROR("No password provided! -- enterPlaintextMasterPW\n");
+        return NULL;
+    }
 
     return inputBuf;
+}
+
+/**
+ * The following function uses the SHA1 function defined in the OpenSSL library's
+ *  `sha.h` file.
+*/
+char* hashPlaintextPassword(char *plaintextPW) {
+    if (checkFuncParamPtr(plaintextPW) == 1) {
+        ERROR("No password provided! -- enterPlaintextMasterPW\n");
+        return NULL;
+    }
+
+    char *hashedPW = (char*)calloc(SHA1_BYTES, sizeof(char));
+
+    SHA1((unsigned char*)plaintextPW, strLen(plaintextPW), (unsigned char*)hashedPW);
+
+    return hashedPW;
 }
 
 void passwordPrompt() {
     printf("Enter a master password for your database!\n");
     printf("When creating this password, there are two things you should consider...\n");
-    printf("\t1. This password will be used to ACCESS  ALL of your passwords, so don't forget it.\n");
-    printf("\t2. This password should be secure enough to PROTECT ALL of your passwords.\n");
+    printf("\t1. This password will be used to access *all* of your passwords, so don't forget it!\n");
+    printf("\t2. This password should be secure enough to protect *all* of your passwords.\n");
 }
 
 /* LOCKS */
 
 /* GETTERS */
-char* getSaltVal(Database *dbObj) {
-    char *retBuf = writeBufContents((*dbObj).saltVal);
+char* getHashedMasterPW(Database *dbObj) {
+    char *retBuf = writeBufContents((*dbObj).hashedMasterPW);
 
     //* NULL check
     if (retBuf == NULL) {
-        ERROR("writeBufContents failed! -- getSaltVal");
+        ERROR("writeBufContents failed! -- getHashedMasterPW");
         return NULL;
     }
 
@@ -106,10 +122,6 @@ int getNumWriters(Database *dbObj) {
     return (*dbObj).numWriters;
 }
 
-Password* getPasswordObj(Database *dbObj) {
-    return (*dbObj).passwordObj;
-}
-
 time_t getCreateTS(Database *dbObj) {
     return (*dbObj).createTS;
 }
@@ -123,9 +135,9 @@ time_t getLastModifiedTS(Database *dbObj) {
 }
 
 /* SETTERS */
-int setSaltVal(Database *dbObj, char *saltVal) {
-    if (copyBufContents((*dbObj).saltVal, saltVal)) {
-        ERROR("copyBufContents failed! -- setSaltVal");
+int setHashedMasterPW(Database *dbObj, char *hashedMasterPW) {
+    if (copyBufContents((*dbObj).hashedMasterPW, hashedMasterPW)) {
+        ERROR("copyBufContents failed! -- setHashedMasterPW");
         return 1;
     }
 
@@ -163,17 +175,6 @@ int setNumWriters(Database *dbObj, int numWriters) {
     }
 
     (*dbObj).numWriters = numWriters;
-
-    return 0;
-}
-
-int setPasswordObj(Database *dbObj, Password *passwordObj) {
-    if(checkFuncParamsPtrs((*dbObj).passwordObj, passwordObj)) {
-        ERROR("NULL pointers! -- setPasswordObj");
-        return 1;
-    }
-
-    (*dbObj).passwordObj = passwordObj;
 
     return 0;
 }
