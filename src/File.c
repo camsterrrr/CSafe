@@ -2,6 +2,7 @@
  * 
 */
 /* LIBRARIES */
+#include <errno.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
@@ -67,7 +68,7 @@ int creatFileLocation(char *fileLocation) {
     }
 
     // check if file already exists, otherwise it will rewrite it (lose all data)
-    int openFD = openFileLocation(fileLocation);
+    int openFD = openFileLocation(fileLocation, O_RDWR);
     if (openFD != -1) {
         INFO("File location already exists! -- creatFileLocation\n");
         return openFD;
@@ -85,14 +86,13 @@ int creatFileLocation(char *fileLocation) {
     return creatFD;
 }
 
-int openFileLocation(char *fileLocation) {
+int openFileLocation(char *fileLocation, mode_t openModeEnum) {
     if (checkFuncParamPtr(fileLocation)) {
         ERROR("NULL pointer! -- openFileLocation\n");
         return 1;
     }
 
-    mode_t mode = O_RDONLY;
-    int openFD = open(fileLocation, mode);
+    int openFD = open(fileLocation, openModeEnum);
 
     //* Error check
     if (checkValidFileDescriptor(openFD)) {
@@ -103,32 +103,19 @@ int openFileLocation(char *fileLocation) {
     return openFD;
 }
 
-int readFileDescriptor(File *fileObj, int fd) {
-    if (checkFuncParamPtr(fileObj)) {
-        ERROR("NULL pointer! -- readFromFileDescriptor\n");
-        return 1;
+char* readFileDescriptor(int fd) {
+    char *readBuf = (char*)calloc(READ_BYTES, sizeof(char));
+    size_t readVal = read(fd, readBuf, READ_BYTES);
+
+    if (readVal == 0) {
+        INFO("read system call reached the end of the file! -- readFileDescriptor\n");
+    } else if (readVal == -1) {
+        ERROR("read system call failed! -- readFileDescriptor\n");
+        fprintf(stderr, "errno: %d\n", errno);
+        return NULL;
     }
 
-    FILE *FILE = fdopen(fd, "r");
-
-    //* NULL check
-    if (FILE == NULL) {
-        ERROR("Unable to open file descriptor! -- readFromFileDescriptor\n");
-        return -1;
-    }
-
-    //! This will be annoying to write 
-    //- scan ahead for special chars
-    // char buffer[256];
-    // std::string fileContents = "";
-    // while (fgets(buffer, 1024, FILE) != NULL) {
-    //     fileContents.append(buffer);
-    //     PRINTSTR(buffer);
-    // }
-
-    fclose(FILE);
-
-    return 0;
+    return readBuf;
 }
 
 int unlinkFileLocation(char *fileLocation) {
@@ -143,6 +130,22 @@ int unlinkFileLocation(char *fileLocation) {
     }
 
     return 0;
+}
+
+/**
+ * This function moves the offset of the file descriptor using the `seek` 
+ *  system call.
+ */
+off_t seekFileDescriptor(int fd, int lseekEnum, off_t offset) {
+
+    off_t seekVal = lseek(fd, offset, lseekEnum);
+
+    if (seekVal == -1) {
+        ERROR("lseek system call failed! -- seekFileDescriptor\n");
+        return -1;
+    }
+
+    return seekVal;
 }
 
 size_t writeFileDescriptor(int fd, char *dataToWrite) {

@@ -6,6 +6,10 @@
 
 TestSuite(File, .disabled=false);
 
+Test(File, infoMsg) {
+    INFO("Now testing File methods, these should output warnings!\n");
+}
+
 Test(File, constructorFileObj0) {
     File fileObj = newFileObj();
 
@@ -72,7 +76,7 @@ Test(File, creatFileLocation2) {
 Test(File, openFileLocation0) {
     char *fileLocation = "./output/openFileLocation0";
 
-    int fd = openFileLocation(fileLocation);
+    int fd = openFileLocation(fileLocation, O_RDWR);
     cr_assert(fd == -1);
 }
 
@@ -81,7 +85,7 @@ Test(File, openFileLocation1) {
 
     int creatFD = creatFileLocation(fileLocation);
     // close(creatFD);
-    int openFD = openFileLocation(fileLocation);
+    int openFD = openFileLocation(fileLocation, O_RDWR);
     cr_assert(openFD != creatFD); // close(creatFD) on line 83 changes the result
 
     close(creatFD);
@@ -120,6 +124,11 @@ Test(File, writeFileDescriptor1) {
     char *dataToWrite = "CSafe was written in C by C!";
     int writeVal = writeFileDescriptor(creatFD, dataToWrite);
 
+    cr_assert(writeVal != -1);
+    cr_assert(writeVal == (strLen(dataToWrite) + 1));
+
+    close(creatFD);
+
     // intentionally not unlinking the file
 }
 
@@ -127,10 +136,36 @@ Test(File, writeFileDescriptor2) {
     // append data to file created in last unit test
 
     char *fileLocation = "./output/writeFileDescriptor1";
+    int openFD = openFileLocation(fileLocation, O_RDWR); 
+
+    seekFileDescriptor(openFD, 0, SEEK_END);
+
+    char *dataToWrite = "Adding more data!";
+    int writeVal = writeFileDescriptor(openFD, dataToWrite);
+
+    cr_assert(writeVal != -1);
+    cr_assert(writeVal == (strLen(dataToWrite) + 1));
+
+    close(openFD);
+
+    int unlinkVal = unlinkFileLocation(fileLocation);
+    cr_assert(unlinkVal == 0);
+}
+
+Test(File, readFileDescriptor1) {
+    char *fileLocation = "./output/readFileDescriptor1";
     int creatFD = creatFileLocation(fileLocation);
 
     char *dataToWrite = "CSafe was written in C by C!";
     int writeVal = writeFileDescriptor(creatFD, dataToWrite);
+    close(creatFD);
 
-    // intentionally not unlinking the file
+    int openFD = openFileLocation(fileLocation, O_RDONLY); 
+    char *readBuf = readFileDescriptor(openFD);
+    close(openFD);
+
+    int unlinkVal = unlinkFileLocation(fileLocation);
+    cr_assert(unlinkVal == 0);
+
+    cr_assert(strcmp(readBuf, dataToWrite) == 0);
 }
