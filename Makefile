@@ -17,19 +17,20 @@ TEST_TARGET = tests
 
 # MAKE FUNCTIONS
 ## entry point for the make commmand
-all: clean bin ${MAIN_TARGET} clear
+all: clean mkdir ${MAIN_TARGET} clear
 	bin/csafe
 
-Wall: clean bin ${MAIN_TARGET}
+Wall: clean mkdir ${MAIN_TARGET}
 
 ## build the debug executable
-debug: clean bin $(TESTOBJS) clear
+debug: clean mkdir $(TESTOBJS) clear
 	$(CC) $(CFLAGS) $@.c -o bin/$@ $(TESTOBJS) $(LDLIBS)
 	bin/$@
 
-unittest: clean bin $(TESTOBJS) $(UNITTESTS) clear
+unittest: clean mkdir $(TESTOBJS) $(UNITTESTS) clear
 	$(CC) $(CFLAGS) $(UNITTESTS) -o bin/$@ $(TESTOBJS) $(LDLIBS)
-	bin/unittest
+	bin/$@
+	rmdir output
 
 $(MAIN_TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o bin/$@ $(OBJS) $(LDLIBS)
@@ -40,15 +41,15 @@ bin/%.o: src/%.c $(HEADERS)
 ## remove .o files and the executable
 ## -rf to recursively remove files from directory
 clean:
-	rm -rf bin
+	rm -rf bin output
 
 clear:
 	clear
 
 ## make binary directory
 ## -p for removing chance of errors
-bin:
-	mkdir -p bin
+mkdir:
+	mkdir -p bin output
 
 find:
 	find ./output -type f -name "_*"

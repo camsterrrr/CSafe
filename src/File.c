@@ -1,6 +1,7 @@
 /**
  * 
 */
+
 /* LIBRARIES */
 #include <errno.h>
 #include <fcntl.h>
@@ -67,15 +68,18 @@ int creatFileLocation(char *fileLocation) {
         return -1;
     }
 
+    mode_t mode = O_RDWR;
+
     // check if file already exists, otherwise it will rewrite it (lose all data)
-    int openFD = openFileLocation(fileLocation, O_RDWR);
+    int openFD = openFileLocation(fileLocation, mode);
     if (openFD != -1) {
         INFO("File location already exists! -- creatFileLocation\n");
         return openFD;
     }
 
-    mode_t mode = O_RDWR;
-    int creatFD = creat(fileLocation, mode);
+    mode = O_CREAT | O_RDWR;
+
+    int creatFD = open(fileLocation, mode);
 
     //* Error check
     if (checkValidFileDescriptor(creatFD)) {

@@ -31,7 +31,7 @@ Database newDatabase() {
     return dbObj;
 }
 
-Database newDatabaseParams_() {
+Database newDatabase_() {
     Database dbObj = newDatabase();
 
     //* USER INPUT

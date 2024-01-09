@@ -21,60 +21,72 @@
 Password newPasswordObj() {
     Password passwordObj = {
         .plaintextPW = NULL, 
-        .hashedPW = NULL,
         .pwLen = 0,
-        .capitalCharFlag = 0,
-        .spaceCharFlag = 0,
-        .specialCharFlag = 0,
+        .numberBit = 0,
+        .spaceBit = 0,
+        .specialBit = 0,
+        .uppercaseBit = 0
     };
 
     return passwordObj;
 }
 
-Password newPasswordObjParams(char* plaintextPW, char *hashedPW, 
-        unsigned int capitalCharFlag, unsigned int spaceCharFlag, 
-        unsigned int specialCharFlag) {
-    Password passwordObj = {
-        .plaintextPW = NULL, 
-        .hashedPW = NULL,
-        .pwLen = 0,
-        .capitalCharFlag = 0,
-        .spaceCharFlag = 0,
-        .specialCharFlag = 0,
-    };
+Password* newPasswordObj_(char *plaintextPW, unsigned char numberBit,
+        unsigned char uppercaseBit, unsigned char spaceBit, 
+        unsigned char specialBit) {
+    Password passwordObj = newPasswordObj();
 
     //! Account for NULL checks
     setPlaintextPW(&passwordObj, plaintextPW);
-    setHashedPW(&passwordObj, hashedPW);
     setPWLen(&passwordObj, strLen(plaintextPW));
-    setCapitalCharFlag(&passwordObj, capitalCharFlag);
-    setSpaceCharFlag(&passwordObj, spaceCharFlag);
-    setSpecialCharFlag(&passwordObj, specialCharFlag);
+    setNumberBit(&passwordObj, numberBit);
+    setSpaceBit(&passwordObj, spaceBit);
+    setSpecialBit(&passwordObj, specialBit);
+    setUppercaseBit(&passwordObj, uppercaseBit);
 
-    return passwordObj;
+    return &passwordObj;
 }
 
 /* MEMBER FUNCTIONS */
+char* generatePW(Password *passwordObj) {
+    char *newPW = (char*)calloc((*passwordObj).pwLen + 1, sizeof(char));
+
+    int idx = 0;
+    while (idx < (*passwordObj).pwLen) {
+        unsigned char flag = 0;
+
+        int randNum = rand() % (128 + 1); // 128 is the "normal" ascii range
+
+        if (randNum == SPACE_ASCII) {
+            if (getSpaceBit(passwordObj) == 1) { flag = 1; } 
+        } else if (randNum >= SPECIALRANGE1_ASCII_BEGIN && randNum <= SPECIALRANGE1_ASCII_END
+            || (randNum >= SPECIALRANGE2_ASCII_BEGIN && randNum <= SPECIALRANGE2_ASCII_END)
+            || (randNum >= SPECIALRANGE3_ASCII_BEGIN && randNum <= SPECIALRANGE3_ASCII_END)
+            || (randNum >= SPECIALRANGE4_ASCII_BEGIN && randNum <= SPECIALRANGE4_ASCII_END)
+            ) {
+            if (getSpecialBit(passwordObj) == 1) { flag = 1; } 
+        } else if (randNum >= NUMBER_ASCII_BEGIN && randNum <= NUMBER_ASCII_END) { 
+            if (getNumberBit(passwordObj) == 1) { flag = 1; } 
+        } else if (randNum >= UPPERCASE_ASCII_BEGIN && randNum <= UPPERCASE_ASCII_END) { 
+            if (getUppercaseBit(passwordObj) == 1) { flag = 1; } 
+        } else if (randNum >= LOWERCASE_ASCII_BEGIN && randNum <= LOWERCASE_ASCII_END) { 
+            flag = 1; // no need to check for "lowercaseBit"
+        }
+
+        if (flag == 1) { 
+            newPW[idx] = randNum;
+            idx++; 
+        }
+    }
+}
 
 /* GETTERS */
 char* getPlaintextPW(Password *passwordObj) {
-    char *retBuf = writeBufContents((*passwordObj).hashedPW);
+    char *retBuf = writeBufContents((*passwordObj).plaintextPW);
 
     //* NULL check
     if (retBuf == NULL) {
         ERROR("writeBufContents failed! -- getPlaintextPW");
-        return NULL;
-    }
-
-    return retBuf;
-}
-
-char* getHashedPW(Password *passwordObj) {
-    char *retBuf = writeBufContents((*passwordObj).hashedPW);
-
-    //* NULL check
-    if (retBuf == NULL) {
-        ERROR("writeBufContents failed! -- getHashedPW");
         return NULL;
     }
 
@@ -87,20 +99,26 @@ size_t getPWLen(Password *passwordObj) {
     return retVal;
 }
 
-unsigned int getCapitalCharFlag(Password *passwordObj) {
-    unsigned int retVal = (*passwordObj).capitalCharFlag;
+unsigned char getNumberBit(Password *passwordObj) {
+    unsigned int retVal = (*passwordObj).numberBit;
 
     return retVal;
 }
 
-unsigned int getSpaceCharFlag(Password *passwordObj) {
-    unsigned int retVal = (*passwordObj).spaceCharFlag;
+unsigned char getSpaceBit(Password *passwordObj) {
+    unsigned int retVal = (*passwordObj).spaceBit;
 
     return retVal;
 }
 
-unsigned int getSpecialCharFlag(Password *passwordObj) {
-    unsigned int retVal = (*passwordObj).specialCharFlag;
+unsigned char getSpecialBit(Password *passwordObj) {
+    unsigned int retVal = (*passwordObj).specialBit;
+
+    return retVal;
+}
+
+unsigned char getUppercaseBit(Password *passwordObj) {
+    unsigned int retVal = (*passwordObj).uppercaseBit;
 
     return retVal;
 }
@@ -110,16 +128,6 @@ int setPlaintextPW(Password *passwordObj, char *plaintextPW) {
     //* copyBufContents call
     if (copyBufContents((*passwordObj).plaintextPW, plaintextPW)) {
         ERROR("copyBufContents failed! -- setPlaintextPW");
-        return 1;
-    }
-
-    return 0;
-}
-
-int setHashedPW(Password *passwordObj, char *hashedPW) {
-    //* copyBufContents call
-    if (copyBufContents((*passwordObj).hashedPW, hashedPW)) {
-        ERROR("copyBufContents failed! -- setHashedPW");
         return 1;
     }
 
@@ -138,38 +146,50 @@ int setPWLen(Password *passwordObj, size_t pwLen) {
     return 0;
 }
 
-int setCapitalCharFlag(Password *passwordObj, unsigned int capitalCharFlag) {
+int setNumberBit(Password *passwordObj, unsigned char numberBit) {
     //* NULL check
-    if (checkFuncParamsInt(passwordObj, capitalCharFlag)) {
-        ERROR("NULL pointers! -- setCapitalCharFlag");
+    if (checkFuncParamPtr(passwordObj)) {
+        ERROR("NULL pointers! -- setNumberBit");
         return 1; 
     }
 
-    (*passwordObj).capitalCharFlag = capitalCharFlag;
+    (*passwordObj).numberBit = numberBit;
 
     return 0;
 }
 
-int setSpaceCharFlag(Password *passwordObj, unsigned int spaceCharFlag) {
+int setUppercaseBit(Password *passwordObj, unsigned char uppercaseBit) {
     //* NULL check
-    if (checkFuncParamsInt(passwordObj, spaceCharFlag)) {
-        ERROR("NULL pointers! -- setSpaceCharFlag");
+    if (checkFuncParamPtr(passwordObj)) {
+        ERROR("NULL pointers! -- setUppercaseBit");
         return 1; 
     }
 
-    (*passwordObj).spaceCharFlag = spaceCharFlag;
+    (*passwordObj).uppercaseBit = uppercaseBit;
 
     return 0;
 }
 
-int setSpecialCharFlag(Password *passwordObj, unsigned int specialCharFlag) {
+int setSpaceBit(Password *passwordObj, unsigned char spaceBit) {
     //* NULL check
-    if (checkFuncParamsInt(passwordObj, specialCharFlag)) {
-        ERROR("NULL pointers! -- setSpecialCharFlag");
+    if (checkFuncParamPtr(passwordObj)) {
+        ERROR("NULL pointers! -- setSpaceBit");
         return 1; 
     }
 
-    (*passwordObj).specialCharFlag = specialCharFlag;
+    (*passwordObj).spaceBit = spaceBit;
+
+    return 0;
+}
+
+int setSpecialBit(Password *passwordObj, unsigned char specialBit) {
+    //* NULL check
+    if (checkFuncParamPtr(passwordObj)) {
+        ERROR("NULL pointers! -- setSpecialBit");
+        return 1; 
+    }
+
+    (*passwordObj).specialBit = specialBit;
 
     return 0;
 }

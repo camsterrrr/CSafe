@@ -3,7 +3,6 @@
 */
 
 /* LIBRARIES */
-#include <fcntl.h>
 #include "stdlib.h"
 #include "stdio.h"
 #include <unistd.h>
@@ -18,17 +17,6 @@ typedef struct File {
     char *fileLocation;
     int fd;
 } File;
-
-// enum lseekEnum {
-//     startOffset = SEEK_CUR, 
-//     currPlusOffset = SEEK_SET,
-//     endOffset = SEEK_END
-// };
-
-// enum openModeEnum {
-//     read = O_RDONLY,
-//     readWrite = O_RDWR
-// };
 
 /* CONSTRUCTORS */
 File newFileObj();

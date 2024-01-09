@@ -50,9 +50,6 @@ int copyBufContents(char** dest, char **src) {
     // wipe memory location
     if ((*dest) != NULL) {
         clearBuf(dest);
-        // cStrSize = strlen((*dest));
-        // memset(&(*dest), 0, cStrSize);
-        // free((*dest));
     }
 
     // assign new memory

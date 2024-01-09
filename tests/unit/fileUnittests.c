@@ -1,4 +1,6 @@
 #include <criterion/criterion.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <string.h>
 
 #include "../../src/File.h"
@@ -50,34 +52,36 @@ Test(File, constructorFileObj2) {
 Test(File, creatFileLocation0) {
     char *fileLocation = NULL;
 
-    int fd = creatFileLocation(fileLocation);
-    cr_assert(fd == -1);
+    int creatFD = creatFileLocation(fileLocation);
+    cr_assert(creatFD == -1);
 }
 
 Test(File, creatFileLocation1) {
     char *fileLocation = "./output/creatFileLocation1";
 
-    int fd = creatFileLocation(fileLocation);
-    cr_assert(fd != -1);
-    close(fd);
+    int creatFD = creatFileLocation(fileLocation);
+    cr_assert(creatFD != -1);
+
+    close(creatFD);
 }
 
 Test(File, creatFileLocation2) {
     char *fileLocation = "./output/creatFileLocation2";
 
-    int fd = creatFileLocation(fileLocation);
-    cr_assert(fd != -1);
-    close(fd); // must close fd in order to unlink it
+    int creatFD = creatFileLocation(fileLocation);
+    cr_assert(creatFD != -1);
 
-    int retVal = unlinkFileLocation(fileLocation);
-    cr_assert(retVal == 0);
+    close(creatFD); // must close fd in order to unlink it
+
+    int unlinkVal = unlinkFileLocation(fileLocation);
+    cr_assert(unlinkVal == 0);
 }
 
 Test(File, openFileLocation0) {
     char *fileLocation = "./output/openFileLocation0";
 
-    int fd = openFileLocation(fileLocation, O_RDWR);
-    cr_assert(fd == -1);
+    int openFD = openFileLocation(fileLocation, O_RDWR);
+    cr_assert(openFD == -1);
 }
 
 Test(File, openFileLocation1) {

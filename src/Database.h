@@ -17,12 +17,13 @@ typedef struct Database {
     char *hashedMasterPW;
     File *fileObj;
     int numReaders, numWriters;
+    Password *passwordObj;
     time_t createTS, lastAccessedTS, lastModifiedTS;
 } Database;
 
 /* CONSTRUCTORS */
 Database newDatabase();
-Database newDatabaseParams_();
+Database newDatabase_();
 
 /* MEMBER FUNCTIONS */
 char* enterPlaintextMasterPW();
@@ -36,19 +37,21 @@ void passwordPrompt();
 /* LOCKS */
 
 /* GETTERS */
-char* getHashedMasterPW(Database*);
+char* getSaltVal(Database*);
 File* getFileObj(Database*);
 int getNumReaders(Database*);
 int getNumWriters(Database*);
+Password* getPasswordObj(Database*);
 time_t getCreateTS(Database*);
 time_t getLastAccessedTS(Database*);
 time_t getLastModifiedTS(Database*);
 
 /* SETTERS */
-int setHashedMasterPW(Database*, char*);
+int setSaltVal(Database*, char*);
 int setFileObj(Database*, File*);
 int setNumReaders(Database*, int);
 int setNumWriters(Database*, int);
+int setPasswordObj(Database*, Password*);
 int setCreateTS(Database*, time_t);
 int setLastAccessedTS(Database*, time_t);
 int setLastModifiedTS(Database*, time_t);
