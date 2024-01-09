@@ -27,7 +27,7 @@ int checkFuncParamsInt(void *arbitraryPtr0, int arbitraryInt) {
 
 int clearBuf(char **arbitraryBuf) {
     if (checkFuncParamPtr((*arbitraryBuf))) {
-        ERROR("NULL pointer! -- clearBuf");
+        ERROR("NULL pointer! -- clearBuf\n");
         return 1;
     }
 
@@ -41,7 +41,7 @@ int clearBuf(char **arbitraryBuf) {
 int copyBufContents(char** dest, char **src) {
     //* NULL check
     if (checkFuncParamPtr((*src))) {
-        ERROR("NULL pointer! -- copyBufContents");
+        ERROR("NULL pointer! -- copyBufContents\n");
         return 1;
     }
 
@@ -58,7 +58,7 @@ int copyBufContents(char** dest, char **src) {
 
     //* NULL check
     if ((*dest) == NULL) {
-        ERROR("Memory allocation failed! -- copyBufContents");
+        ERROR("Memory allocation failed! -- copyBufContents\n");
         return 1;
     }
 
@@ -80,7 +80,7 @@ int copyBufContents(char** dest, char **src) {
 char* writeBufContents(char* src) {
     //* NULL check
     if (src == NULL) {
-        ERROR("NULL pointer! -- writeBufContents");
+        ERROR("NULL pointer! -- writeBufContents\n");
         return NULL;
     }
 
@@ -89,7 +89,7 @@ char* writeBufContents(char* src) {
     
     //* NULL check
     if (dest == NULL) {
-        ERROR("Error initializing buffer -- writeBufContents \n");
+        ERROR("Error initializing buffer -- writeBufContents\n");
         return NULL;
     }
 

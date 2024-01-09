@@ -36,7 +36,7 @@ Password newPasswordObj();
 Password* newPasswordObj_(char*, unsigned char, unsigned char, unsigned char, unsigned char);
 
 /* MEMBER FUNCTIONS */
-char* generatePW(Password*);
+char* generatePW(Password*, size_t);
 
 /* GETTERS */
 char* getPlaintextPW(Password*);

@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "Common.h"
 #include "Log.h"
@@ -48,11 +49,17 @@ Password* newPasswordObj_(char *plaintextPW, unsigned char numberBit,
 }
 
 /* MEMBER FUNCTIONS */
-char* generatePW(Password *passwordObj) {
-    char *newPW = (char*)calloc((*passwordObj).pwLen + 1, sizeof(char));
+char* generatePW(Password *passwordObj, size_t newPwLen) {
+    if (checkFuncParamPtr(passwordObj)) {
+        ERROR("NULL pointers! -- generatePW\n");
+        return NULL;
+    }
+
+    char *newPW = (char*)calloc(newPwLen + 1, sizeof(char));
 
     int idx = 0;
-    while (idx < (*passwordObj).pwLen) {
+    srand(time(NULL)); // this is not very secure
+    while (idx < newPwLen) {
         unsigned char flag = 0;
 
         int randNum = rand() % (128 + 1); // 128 is the "normal" ascii range
@@ -78,6 +85,10 @@ char* generatePW(Password *passwordObj) {
             idx++; 
         }
     }
+
+    newPW[newPwLen] = '\0';
+
+    return newPW;
 }
 
 /* GETTERS */
@@ -86,7 +97,7 @@ char* getPlaintextPW(Password *passwordObj) {
 
     //* NULL check
     if (retBuf == NULL) {
-        ERROR("writeBufContents failed! -- getPlaintextPW");
+        ERROR("writeBufContents failed! -- getPlaintextPW\n");
         return NULL;
     }
 
@@ -127,7 +138,7 @@ unsigned char getUppercaseBit(Password *passwordObj) {
 int setPlaintextPW(Password *passwordObj, char *plaintextPW) {
     //* copyBufContents call
     if (copyBufContents((*passwordObj).plaintextPW, plaintextPW)) {
-        ERROR("copyBufContents failed! -- setPlaintextPW");
+        ERROR("copyBufContents failed! -- setPlaintextPW\n");
         return 1;
     }
 
@@ -137,7 +148,7 @@ int setPlaintextPW(Password *passwordObj, char *plaintextPW) {
 int setPWLen(Password *passwordObj, size_t pwLen) {
     //* NULL check
     if (checkFuncParamsInt(passwordObj, pwLen)) {
-        ERROR("NULL pointers! -- setPWLen");
+        ERROR("NULL pointers! -- setPWLen\n");
         return 1; 
     }
 
@@ -149,7 +160,7 @@ int setPWLen(Password *passwordObj, size_t pwLen) {
 int setNumberBit(Password *passwordObj, unsigned char numberBit) {
     //* NULL check
     if (checkFuncParamPtr(passwordObj)) {
-        ERROR("NULL pointers! -- setNumberBit");
+        ERROR("NULL pointers! -- setNumberBit\n");
         return 1; 
     }
 
@@ -161,7 +172,7 @@ int setNumberBit(Password *passwordObj, unsigned char numberBit) {
 int setUppercaseBit(Password *passwordObj, unsigned char uppercaseBit) {
     //* NULL check
     if (checkFuncParamPtr(passwordObj)) {
-        ERROR("NULL pointers! -- setUppercaseBit");
+        ERROR("NULL pointers! -- setUppercaseBit\n");
         return 1; 
     }
 
@@ -173,7 +184,7 @@ int setUppercaseBit(Password *passwordObj, unsigned char uppercaseBit) {
 int setSpaceBit(Password *passwordObj, unsigned char spaceBit) {
     //* NULL check
     if (checkFuncParamPtr(passwordObj)) {
-        ERROR("NULL pointers! -- setSpaceBit");
+        ERROR("NULL pointers! -- setSpaceBit\n");
         return 1; 
     }
 
@@ -185,7 +196,7 @@ int setSpaceBit(Password *passwordObj, unsigned char spaceBit) {
 int setSpecialBit(Password *passwordObj, unsigned char specialBit) {
     //* NULL check
     if (checkFuncParamPtr(passwordObj)) {
-        ERROR("NULL pointers! -- setSpecialBit");
+        ERROR("NULL pointers! -- setSpecialBit\n");
         return 1; 
     }
 
