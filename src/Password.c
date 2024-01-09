@@ -18,7 +18,6 @@
 /**
  * This function serves as the default constructor of the Password class.
 */
-/* CONSTRUCTORS */
 Password newPasswordObj() {
     Password passwordObj = {
         .plaintextPW = NULL, 

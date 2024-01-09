@@ -4,6 +4,7 @@
 
 /* LIBRARIES */
 #include <stdio.h>
+
 #define SPACE_ASCII 32
 #define SPECIALRANGE1_ASCII_BEGIN 33
 #define SPECIALRANGE1_ASCII_END 47

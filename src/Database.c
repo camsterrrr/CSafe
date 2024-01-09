@@ -17,15 +17,14 @@
 */
 Database newDatabase() {
     File fileObj = newFileObj();
+    Timestamp timestampObj = newTimestamp();
 
     Database dbObj = {
         .fileObj = &fileObj,
         .hashedMasterPW = NULL,
         .numReaders = 0,
         .numWriters = 0,
-        .createTS = 0, 
-        .lastAccessedTS = 0,
-        .lastModifiedTS = 0,
+        .timestampObj = &timestampObj
     };
 
     return dbObj;
@@ -47,9 +46,6 @@ Database newDatabase_() {
     setNumWriters(&dbObj, 1);
 
     time_t ts = time(NULL);
-    setCreateTS(&dbObj, ts);
-    setLastAccessedTS(&dbObj, ts);
-    setLastModifiedTS(&dbObj, ts);
 
     return dbObj;
 }
@@ -103,7 +99,7 @@ char* getHashedMasterPW(Database *dbObj) {
 
     //* NULL check
     if (retBuf == NULL) {
-        ERROR("writeBufContents failed! -- getHashedMasterPW");
+        ERROR("writeBufContents failed! -- getHashedMasterPW\n");
         return NULL;
     }
 
@@ -122,22 +118,14 @@ int getNumWriters(Database *dbObj) {
     return (*dbObj).numWriters;
 }
 
-time_t getCreateTS(Database *dbObj) {
-    return (*dbObj).createTS;
-}
-
-time_t getLastAccessedTS(Database *dbObj) {
-    return (*dbObj).lastAccessedTS;
-}
-
-time_t getLastModifiedTS(Database *dbObj) {
-    return (*dbObj).lastModifiedTS;
+Timestamp* getTimestampObj(Database *dbObj) {
+    return  (*dbObj).timestampObj;
 }
 
 /* SETTERS */
 int setHashedMasterPW(Database *dbObj, char *hashedMasterPW) {
     if (copyBufContents((*dbObj).hashedMasterPW, hashedMasterPW)) {
-        ERROR("copyBufContents failed! -- setHashedMasterPW");
+        ERROR("copyBufContents failed! -- setHashedMasterPW\n");
         return 1;
     }
 
@@ -145,8 +133,8 @@ int setHashedMasterPW(Database *dbObj, char *hashedMasterPW) {
 }
 
 int setFileObj(Database *dbObj, File *fileObj) {
-    if(checkFuncParamsPtrs((*dbObj).fileObj, fileObj)) {
-        ERROR("NULL pointers! -- setFileObj");
+    if(checkFuncParamsPtrs(dbObj, fileObj)) {
+        ERROR("NULL pointers! -- setFileObj\n");
         return 1;
     }
 
@@ -157,8 +145,8 @@ int setFileObj(Database *dbObj, File *fileObj) {
 
 int setNumReaders(Database *dbObj, int numReaders) {
     //* NULL check
-    if(checkFuncParamsInt(dbObj, numReaders)) {
-        ERROR("NULL pointers! -- setNumReaders");
+    if(checkFuncParamPtr(dbObj)) {
+        ERROR("NULL pointer! -- setNumReaders\n");
         return 1; 
     }
 
@@ -169,8 +157,8 @@ int setNumReaders(Database *dbObj, int numReaders) {
 
 int setNumWriters(Database *dbObj, int numWriters) {
     //* NULL check
-    if(checkFuncParamsInt(dbObj, numWriters)) {
-        ERROR("NULL pointers! -- setNumWriters");
+    if(checkFuncParamPtr(dbObj)) {
+        ERROR("NULL pointer! -- setNumWriters\n");
         return 1; 
     }
 
@@ -179,38 +167,13 @@ int setNumWriters(Database *dbObj, int numWriters) {
     return 0;
 }
 
-int setCreateTS(Database *dbObj, time_t createTS) {
-    //* NULL check
-    if(checkFuncParamsInt(dbObj, createTS)) {
-        ERROR("NULL pointers! -- setCreateTS");
-        return 1; 
+int setTimestampObj(Database *dbObj, Timestamp *timestampObj) {
+    if(checkFuncParamsPtrs(dbObj, timestampObj)) {
+        ERROR("NULL pointers! -- setTimestampObj\n");
+        return 1;
     }
 
-    (*dbObj).createTS = createTS;
-
-    return 0;
-}
-
-int setLastAccessedTS(Database *dbObj, time_t lastAccessedTS) {
-    //* NULL check
-    if(checkFuncParamsInt(dbObj, lastAccessedTS)) {
-        ERROR("NULL pointers! -- setLastAccessedTS");
-        return 1; 
-    }
-
-    (*dbObj).lastAccessedTS = lastAccessedTS;
-
-    return 0;
-}
-
-int setLastModifiedTS(Database *dbObj, time_t lastModifiedTS) {
-    //* NULL check
-    if(checkFuncParamsInt(dbObj, lastModifiedTS)) {
-        ERROR("NULL pointers! -- setLastModifiedTS");
-        return 1; 
-    }
-
-    (*dbObj).lastModifiedTS = lastModifiedTS;
+    (*dbObj).timestampObj = timestampObj;
 
     return 0;
 }
